@@ -58,6 +58,28 @@ def eval_estimator(m, u):
 
     return eta_K + eta_E
 
+"""
+Implement the Dörfler marking strategy
+"""
+def dorfler_marking(eta2, theta = 0.5):
+    """
+    Returns element indices to refine
+    Assumes the squared residual error
+    """
+    eta2 = np.asarray(eta2)
+    total = eta2.sum()
+
+    if total <= 0:
+        return np.array([], dtype = int)
+    
+    order = np.argsort(eta2)[::-1] # sort elements by decreasing error value
+    csum = np.cumsum(eta2[order]) # compute the sum cumulative sums
+    target = theta * total
+
+    k = np.searchsorted(csum, target) + 1 # find first index where csum is larger than target
+    marked = order[:max(1, k)] # take first k element indices for the marking
+    return marked
+
 if __name__ == "__main__":
     from skfem.visuals.matplotlib import draw, plot
     n_refinements = 10
@@ -83,6 +105,10 @@ if __name__ == "__main__":
             # by default all elements with \eta_K > 0.5* \eta_max will be marked
             # marked elements will then be refined
             # smoothening improves mesh (e.g. to get shape regularity) by moving vertices of the triangles
+            
+            #eta2 = eval_estimator(m, u)
+            #marked = dorfler_marking(eta2, theta=0.5)
+            #m = m.refined(marked).smoothed()
             m = m.refined(adaptive_theta(eval_estimator(m, u))).smoothed()
 
     # visualize final mesh + solution
