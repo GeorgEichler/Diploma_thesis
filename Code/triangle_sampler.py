@@ -1,6 +1,6 @@
 import numpy as np
 
-def sample_uniform_points_in_triangles(mesh, m_samples, rng=None):
+def sample_uniform_points_in_triangles(mesh, m_samples, rng=None, return_barycentric=False):
     """
     Return samples using reflection trick on triangles
     """
@@ -33,4 +33,6 @@ def sample_uniform_points_in_triangles(mesh, m_samples, rng=None):
         + w1[..., None] * v1[:, None, :]
         + w2[..., None] * v2[:, None, :]
     )
+    if return_barycentric:
+        return pts, (w0, w1, w2)
     return pts  # (n_elements, m_samples, 2)
