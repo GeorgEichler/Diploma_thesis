@@ -148,7 +148,7 @@ if __name__ == "__main__":
             # marked elements will then be refined
             # smoothening improves mesh (e.g. to get shape regularity) by moving vertices of the triangles
             
-            eta2 = eval_estimator(m, u)
+            eta2 = eval_estimator(m, u, fhat_K)
             marked = dorfler_marking(eta2, theta=0.5)
             m = m.refined(marked).smoothed()
             #m = m.refined(adaptive_theta(eval_estimator(m, u))).smoothed()
