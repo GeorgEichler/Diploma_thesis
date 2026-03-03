@@ -25,60 +25,52 @@ def triangle_areas(mesh):
     return 0.5 * np.abs((b[:, 0] - a[:, 0]) * (c[:, 1] - a[:, 1]) -
                         (b[:, 1] - a[:, 1]) * (c[:, 0] - a[:, 0]))
 
-def assemble_load_mc_P1(mesh, load_func, m_samples=10, rng=None):
-    """
-    Monte Carlo assembly of F_i = ∫ f φ_i dx for P1 on triangles.
-    Returns global load vector F of length n_vertices.
-    """
+def mc_elementwise_fhat(mesh, load_func, m_samples=10, rng=None):
     if rng is None:
         rng = np.random.default_rng()
 
-    pts, (w0, w1, w2) = sample_uniform_points_in_triangles(
-        mesh, m_samples, rng=rng, return_barycentric=True
-    )
+    pts = sample_uniform_points_in_triangles(mesh, m_samples, rng=rng)
     x = pts[..., 0]
     y = pts[..., 1]
 
     vals = load_func(x, y)
     vals = np.asarray(vals)
     if vals.ndim == 0:
-        vals = np.full_like(x, float(vals), dtype=float)  # handle constant f
+        vals = np.full_like(x, float(vals), dtype=float)
 
-    #ne = mesh.nelements
-    areas = triangle_areas(mesh)  # (ne,)
+    fhat_K = np.mean(vals, axis=1)  # one value per element
+    return fhat_K
 
-    # local contributions for each triangle vertex
-    scale = areas / m_samples
-    b0 = scale * np.sum(vals * w0, axis=1)   # (ne,)
-    b1 = scale * np.sum(vals * w1, axis=1)
-    b2 = scale * np.sum(vals * w2, axis=1)
+def assemble_load_mc_P1(mesh, fhat_K):
+    """
+    Monte Carlo assembly of F_i = ∫ f φ_i dx for P1 on triangles.
+    Returns global load vector F of length n_vertices.
+    """
+    areas = triangle_areas(mesh)
+    t = mesh.t # size (3, n_elements)
 
-    # scatter-add into global vector at vertex indices
-    F = np.zeros(mesh.p.shape[1], dtype=float)
-    t = mesh.t  # (3, ne) vertex indices
+    # integral of barycentric coordinate functions over triangle K is
+    # |K|/3 and use that f is costant across K to get \int_K fhat * \phi_node dx
+    local = (areas * fhat_K) / 3.0
 
-    np.add.at(F, t[0], b0)
-    np.add.at(F, t[1], b1)
-    np.add.at(F, t[2], b2)
+    F = np.zeros(mesh.p.shape[1])
+
+    np.add.at(F, t[0], local)
+    np.add.at(F, t[1], local)
+    np.add.at(F, t[2], local)
 
     return F
 
 
 # Residual estimator with input mesh m and approximation u
-def eval_estimator(m, u):
+def eval_estimator(m, u, fhat_K):
     # interior residual
-    # Basis elements contain the mesh and the discretization space
-    basis = Basis(m, e)
 
-    # implement residual
-    @Functional
-    def interior_residual(w):
-        h = w.h
-        x, y = w.x
-        return h**2 * load_func(x, y)**2
-    
-    # return residual for each element depending on basis and the interpolation of u
-    eta_K = interior_residual.elemental(basis, w = basis.interpolate(u))
+    areas = triangle_areas(m)
+    hK = np.sqrt(areas)
+
+    # interior term
+    eta_K = (hK**2) * areas * (fhat_K**2)
 
     # get the solution values of bith sides of a triangle from each side (may jump)
     fbasis = [InteriorFacetBasis(m, e, side=i) for i in [0,1]]
@@ -139,7 +131,9 @@ if __name__ == "__main__":
 
         # assemble stiffeness matrix and load vector
         K = asm(laplace, basis)
-        f = assemble_load_mc_P1(m, load_func, m_samples=m_samples, rng=rng)
+        
+        fhat_K = mc_elementwise_fhat(m, load_func, m_samples, rng)
+        f = assemble_load_mc_P1(m, fhat_K)
 
         # Homogeneous Dirichlet u=0 on boundary:
         # solve for interior nodes only
