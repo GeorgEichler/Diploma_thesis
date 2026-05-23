@@ -1,0 +1,15 @@
+[project]
+name = "afem-skfem"
+version = "0.1.0"
+description = "Modular AFEM framework for Laplace problems using scikit-fem."
+requires-python = ">=3.10"
+dependencies = [
+  "numpy",
+  "scipy",
+  "matplotlib",
+  "scikit-fem[all]"
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["afem*"]
