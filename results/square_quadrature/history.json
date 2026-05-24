@@ -13,7 +13,17 @@
     "save_plots": true,
     "plot_every": 3,
     "output_dir": "results\\square_quadrature",
-    "solver": "direct"
+    "solver": "direct",
+    "compute_energy": false,
+    "compute_reference_error": true,
+    "reference_order": 3,
+    "reference_quadrature_order": null
+  },
+  "reference": {
+    "reference_order": 3,
+    "reference_ndofs": 24601,
+    "reference_quadrature_order": 10,
+    "reference_energy": -0.006413040130510283
   },
   "history": [
     {
@@ -21,84 +31,120 @@
       "ndofs": 25,
       "nelems": 32,
       "estimator": 5.672360117372274e-15,
-      "nmarked": 3
+      "nmarked": 3,
+      "energy": -9.950016338673864e-31,
+      "h1_semi_error_sq_ref": 0.012826080261020566,
+      "h1_semi_error_ref": 0.11325228589755072
     },
     {
       "level": 1,
       "ndofs": 35,
       "nelems": 48,
       "estimator": 3.376413586542142e-15,
-      "nmarked": 12
+      "nmarked": 12,
+      "energy": -1.1271185760741151e-30,
+      "h1_semi_error_sq_ref": 0.012826080261020566,
+      "h1_semi_error_ref": 0.11325228589755072
     },
     {
       "level": 2,
       "ndofs": 74,
       "nelems": 124,
       "estimator": 3.0533898308950516e-15,
-      "nmarked": 12
+      "nmarked": 12,
+      "energy": -1.641325687537625e-30,
+      "h1_semi_error_sq_ref": 0.012826080261020566,
+      "h1_semi_error_ref": 0.11325228589755072
     },
     {
       "level": 3,
       "ndofs": 104,
       "nelems": 180,
       "estimator": 2.3595301404327753e-15,
-      "nmarked": 25
+      "nmarked": 25,
+      "energy": -1.7326601777084705e-30,
+      "h1_semi_error_sq_ref": 0.012826080261020566,
+      "h1_semi_error_ref": 0.11325228589755072
     },
     {
       "level": 4,
       "ndofs": 188,
       "nelems": 335,
       "estimator": 1.6926960983317625e-15,
-      "nmarked": 56
+      "nmarked": 56,
+      "energy": -1.7978291036054888e-30,
+      "h1_semi_error_sq_ref": 0.012826080261020566,
+      "h1_semi_error_ref": 0.11325228589755072
     },
     {
       "level": 5,
       "ndofs": 356,
       "nelems": 657,
       "estimator": 1.2137803977730761e-15,
-      "nmarked": 111
+      "nmarked": 111,
+      "energy": -1.988771835473819e-30,
+      "h1_semi_error_sq_ref": 0.012826080261020566,
+      "h1_semi_error_ref": 0.11325228589755072
     },
     {
       "level": 6,
       "ndofs": 690,
       "nelems": 1298,
       "estimator": 0.007166689419316421,
-      "nmarked": 94
+      "nmarked": 94,
+      "energy": -1.6132975356481488e-05,
+      "h1_semi_error_sq_ref": 0.012793814310307603,
+      "h1_semi_error_ref": 0.11310974454178385
     },
     {
       "level": 7,
       "ndofs": 1014,
       "nelems": 1927,
       "estimator": 0.007368330304279667,
-      "nmarked": 96
+      "nmarked": 96,
+      "energy": -5.045517306729992e-05,
+      "h1_semi_error_sq_ref": 0.012725169914885967,
+      "h1_semi_error_ref": 0.11280589485876155
     },
     {
       "level": 8,
       "ndofs": 1291,
       "nelems": 2475,
       "estimator": 0.0083734099574632,
-      "nmarked": 132
+      "nmarked": 132,
+      "energy": -0.00014218193128880905,
+      "h1_semi_error_sq_ref": 0.012541716398442948,
+      "h1_semi_error_ref": 0.11198980488617233
     },
     {
       "level": 9,
       "ndofs": 1635,
       "nelems": 3143,
       "estimator": 0.00906890816793636,
-      "nmarked": 193
+      "nmarked": 193,
+      "energy": -0.0002693549507151464,
+      "h1_semi_error_sq_ref": 0.012287370359590273,
+      "h1_semi_error_ref": 0.1108484116241197
     },
     {
       "level": 10,
       "ndofs": 2094,
       "nelems": 4050,
       "estimator": 0.009802364689172682,
-      "nmarked": 275
+      "nmarked": 275,
+      "energy": -0.00044416342179027173,
+      "h1_semi_error_sq_ref": 0.011937753417440022,
+      "h1_semi_error_ref": 0.10926002662199942
     },
     {
       "level": 11,
       "ndofs": 2784,
       "nelems": 5417,
       "estimator": 0.0104126933041989,
-      "nmarked": 391
+      "nmarked": 391,
+      "energy": -0.0007212672789289951,
+      "h1_semi_error_sq_ref": 0.011383545703162577,
+      "h1_semi_error_ref": 0.10669370039117856
     }
   ]
 }

@@ -46,6 +46,7 @@ def solve_poisson(mesh, rhs, load_method: str, mc_samples: int, mc_seed: int,
         quadrature_order=quadrature_order)
     A = asm(laplace, basis)
 
+    # fbar is constant across each element for Monte-Carlo method
     fbar = None
     if load_method == "quadrature":
         b = assemble_load_quadrature(basis, rhs)

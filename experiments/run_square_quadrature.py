@@ -14,5 +14,6 @@ if __name__ == "__main__":
         output_dir=Path("results/square_quadrature"),
         quadrature_rule="midpoint",
         plot_every=3,
+        compute_reference_error=True,
     )
     run_afem(cfg, high_oscillation)

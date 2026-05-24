@@ -9,6 +9,7 @@ from .solver import solve_poisson
 from .estimator import residual_estimator
 from .energy_error_norms import (
     add_energy_error_to_history,
+    default_energy_quadrature_order,
     dirichlet_energy,
     reference_solution_energy,
 )
@@ -30,6 +31,9 @@ def run_afem(config: AFEMConfig, rhs):
 
     mesh = make_mesh(config.domain, config.initial_refinements)
     history: list[dict] = []
+    energy_quadrature_order = config.reference_quadrature_order
+    if energy_quadrature_order is None and (config.compute_energy or config.compute_reference_error):
+        energy_quadrature_order = default_energy_quadrature_order(config.reference_order)
 
     for level in range(config.max_iterations):
         # Important for reproducible MC: use same seed policy for a given level.
@@ -41,7 +45,7 @@ def run_afem(config: AFEMConfig, rhs):
         eta = residual_estimator(mesh, u, rhs, fbar=fbar)
         estimator = float(np.linalg.norm(eta))
         energy = (
-            dirichlet_energy(basis, u, rhs)
+            dirichlet_energy(basis, u, rhs, quadrature_order=energy_quadrature_order)
             if config.compute_energy or config.compute_reference_error
             else None
         )
@@ -74,13 +78,14 @@ def run_afem(config: AFEMConfig, rhs):
         if level < config.max_iterations - 1:
             mesh = _refine_marked(mesh, marked)
 
+    # Compute reference solution on final mesh and energy error norm ||\nabla (u - u_h)||_{L^2}^2
     reference_data = None
     if config.compute_reference_error:
         reference_data = reference_solution_energy(
             mesh,
             rhs,
             reference_order=config.reference_order,
-            quadrature_order=config.reference_quadrature_order,
+            quadrature_order=energy_quadrature_order,
         )
         add_energy_error_to_history(history, reference_data["reference_energy"])
 
