@@ -50,14 +50,12 @@ def p0_rhs_by_monte_carlo(mesh, rhs, n_samples: int, seed: int) -> np.ndarray:
 
 
 def assemble_load_p0(basis, fbar: np.ndarray):
-    """Assemble load vector for elementwise constant fbar.
-
-    This uses basis quadrature but passes element-indexed values through w.fbar.
-    """
     from skfem import LinearForm
+
+    fbar_q = np.repeat(fbar[:, None], basis.X.shape[-1], axis=1)
 
     @LinearForm
     def p0_load(v, w):
-        return w.fbar[:, None] * v
+        return w.fbar * v
 
-    return asm(p0_load, basis, fbar=fbar)
+    return asm(p0_load, basis, fbar=fbar_q)

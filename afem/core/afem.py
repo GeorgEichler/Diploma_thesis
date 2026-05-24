@@ -30,7 +30,8 @@ def run_afem(config: AFEMConfig, rhs):
         # Important for reproducible MC: use same seed policy for a given level.
         seed_l = config.mc_seed + level
         u, basis, fbar = solve_poisson(
-            mesh, rhs, config.load_method, config.mc_samples_per_element, seed_l
+            mesh, rhs, config.load_method, config.mc_samples_per_element, seed_l,
+            quadrature_rule=config.quadrature_rule, quadrature_order=config.quadrature_order
         )
         eta = residual_estimator(mesh, u, rhs, fbar=fbar)
         estimator = float(np.linalg.norm(eta))

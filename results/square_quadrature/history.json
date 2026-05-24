@@ -1,0 +1,104 @@
+{
+  "config": {
+    "domain": "unit_square",
+    "dim": 2,
+    "initial_refinements": 2,
+    "max_iterations": 12,
+    "theta": 0.5,
+    "load_method": "quadrature",
+    "quadrature_rule": "midpoint",
+    "quadrature_order": null,
+    "mc_samples_per_element": 32,
+    "mc_seed": 12345,
+    "save_plots": true,
+    "plot_every": 3,
+    "output_dir": "results\\square_quadrature",
+    "solver": "direct"
+  },
+  "history": [
+    {
+      "level": 0,
+      "ndofs": 25,
+      "nelems": 32,
+      "estimator": 4.430178979801647,
+      "nmarked": 8
+    },
+    {
+      "level": 1,
+      "ndofs": 49,
+      "nelems": 80,
+      "estimator": 2.8457239795569866,
+      "nmarked": 14
+    },
+    {
+      "level": 2,
+      "ndofs": 85,
+      "nelems": 144,
+      "estimator": 2.170615529738239,
+      "nmarked": 40
+    },
+    {
+      "level": 3,
+      "ndofs": 191,
+      "nelems": 344,
+      "estimator": 1.3224725978177823,
+      "nmarked": 100
+    },
+    {
+      "level": 4,
+      "ndofs": 408,
+      "nelems": 768,
+      "estimator": 0.9558520633205656,
+      "nmarked": 133
+    },
+    {
+      "level": 5,
+      "ndofs": 679,
+      "nelems": 1292,
+      "estimator": 0.7012202059570309,
+      "nmarked": 338
+    },
+    {
+      "level": 6,
+      "ndofs": 1343,
+      "nelems": 2596,
+      "estimator": 0.5255181164039289,
+      "nmarked": 517
+    },
+    {
+      "level": 7,
+      "ndofs": 2317,
+      "nelems": 4504,
+      "estimator": 0.3847301507638923,
+      "nmarked": 912
+    },
+    {
+      "level": 8,
+      "ndofs": 3979,
+      "nelems": 7804,
+      "estimator": 0.2940950613233668,
+      "nmarked": 1896
+    },
+    {
+      "level": 9,
+      "ndofs": 7303,
+      "nelems": 14412,
+      "estimator": 0.22074633597389484,
+      "nmarked": 2570
+    },
+    {
+      "level": 10,
+      "ndofs": 11921,
+      "nelems": 23600,
+      "estimator": 0.16848719649043506,
+      "nmarked": 5790
+    },
+    {
+      "level": 11,
+      "ndofs": 21663,
+      "nelems": 43028,
+      "estimator": 0.12984085547273466,
+      "nmarked": 8079
+    }
+  ]
+}

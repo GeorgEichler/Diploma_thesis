@@ -1,0 +1,74 @@
+{
+  "config": {
+    "domain": "unit_cube",
+    "dim": 3,
+    "initial_refinements": 1,
+    "max_iterations": 8,
+    "theta": 0.5,
+    "load_method": "quadrature",
+    "mc_samples_per_element": 32,
+    "mc_seed": 12345,
+    "save_plots": true,
+    "plot_every": 2,
+    "output_dir": "results\\cube_quadrature",
+    "solver": "direct"
+  },
+  "history": [
+    {
+      "level": 0,
+      "ndofs": 26,
+      "nelems": 40,
+      "estimator": 11.758048038892653,
+      "nmarked": 3
+    },
+    {
+      "level": 1,
+      "ndofs": 27,
+      "nelems": 44,
+      "estimator": 9.026977100942178,
+      "nmarked": 7
+    },
+    {
+      "level": 2,
+      "ndofs": 37,
+      "nelems": 89,
+      "estimator": 8.463859052425308,
+      "nmarked": 12
+    },
+    {
+      "level": 3,
+      "ndofs": 50,
+      "nelems": 157,
+      "estimator": 6.9263962642270185,
+      "nmarked": 29
+    },
+    {
+      "level": 4,
+      "ndofs": 66,
+      "nelems": 231,
+      "estimator": 5.418396881715008,
+      "nmarked": 59
+    },
+    {
+      "level": 5,
+      "ndofs": 125,
+      "nelems": 508,
+      "estimator": 4.4935114974411725,
+      "nmarked": 96
+    },
+    {
+      "level": 6,
+      "ndofs": 173,
+      "nelems": 740,
+      "estimator": 3.963045587184668,
+      "nmarked": 181
+    },
+    {
+      "level": 7,
+      "ndofs": 261,
+      "nelems": 1169,
+      "estimator": 3.308009725158479,
+      "nmarked": 301
+    }
+  ]
+}
