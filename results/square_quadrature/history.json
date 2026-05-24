@@ -20,85 +20,85 @@
       "level": 0,
       "ndofs": 25,
       "nelems": 32,
-      "estimator": 4.430178979801647,
-      "nmarked": 8
+      "estimator": 5.672360117372274e-15,
+      "nmarked": 3
     },
     {
       "level": 1,
-      "ndofs": 49,
-      "nelems": 80,
-      "estimator": 2.8457239795569866,
-      "nmarked": 14
+      "ndofs": 35,
+      "nelems": 48,
+      "estimator": 3.376413586542142e-15,
+      "nmarked": 12
     },
     {
       "level": 2,
-      "ndofs": 85,
-      "nelems": 144,
-      "estimator": 2.170615529738239,
-      "nmarked": 40
+      "ndofs": 74,
+      "nelems": 124,
+      "estimator": 3.0533898308950516e-15,
+      "nmarked": 12
     },
     {
       "level": 3,
-      "ndofs": 191,
-      "nelems": 344,
-      "estimator": 1.3224725978177823,
-      "nmarked": 100
+      "ndofs": 104,
+      "nelems": 180,
+      "estimator": 2.3595301404327753e-15,
+      "nmarked": 25
     },
     {
       "level": 4,
-      "ndofs": 408,
-      "nelems": 768,
-      "estimator": 0.9558520633205656,
-      "nmarked": 133
+      "ndofs": 188,
+      "nelems": 335,
+      "estimator": 1.6926960983317625e-15,
+      "nmarked": 56
     },
     {
       "level": 5,
-      "ndofs": 679,
-      "nelems": 1292,
-      "estimator": 0.7012202059570309,
-      "nmarked": 338
+      "ndofs": 356,
+      "nelems": 657,
+      "estimator": 1.2137803977730761e-15,
+      "nmarked": 111
     },
     {
       "level": 6,
-      "ndofs": 1343,
-      "nelems": 2596,
-      "estimator": 0.5255181164039289,
-      "nmarked": 517
+      "ndofs": 690,
+      "nelems": 1298,
+      "estimator": 0.007166689419316421,
+      "nmarked": 94
     },
     {
       "level": 7,
-      "ndofs": 2317,
-      "nelems": 4504,
-      "estimator": 0.3847301507638923,
-      "nmarked": 912
+      "ndofs": 1014,
+      "nelems": 1927,
+      "estimator": 0.007368330304279667,
+      "nmarked": 96
     },
     {
       "level": 8,
-      "ndofs": 3979,
-      "nelems": 7804,
-      "estimator": 0.2940950613233668,
-      "nmarked": 1896
+      "ndofs": 1291,
+      "nelems": 2475,
+      "estimator": 0.0083734099574632,
+      "nmarked": 132
     },
     {
       "level": 9,
-      "ndofs": 7303,
-      "nelems": 14412,
-      "estimator": 0.22074633597389484,
-      "nmarked": 2570
+      "ndofs": 1635,
+      "nelems": 3143,
+      "estimator": 0.00906890816793636,
+      "nmarked": 193
     },
     {
       "level": 10,
-      "ndofs": 11921,
-      "nelems": 23600,
-      "estimator": 0.16848719649043506,
-      "nmarked": 5790
+      "ndofs": 2094,
+      "nelems": 4050,
+      "estimator": 0.009802364689172682,
+      "nmarked": 275
     },
     {
       "level": 11,
-      "ndofs": 21663,
-      "nelems": 43028,
-      "estimator": 0.12984085547273466,
-      "nmarked": 8079
+      "ndofs": 2784,
+      "nelems": 5417,
+      "estimator": 0.0104126933041989,
+      "nmarked": 391
     }
   ]
 }

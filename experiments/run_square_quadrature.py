@@ -1,7 +1,7 @@
 from pathlib import Path
 from afem.core.config import AFEMConfig
 from afem.core.afem import run_afem
-from afem.problems.rhs import manufactured_sine_2d
+from afem.problems.rhs import manufactured_sine_2d, high_oscillation
 
 if __name__ == "__main__":
     cfg = AFEMConfig(
@@ -15,4 +15,4 @@ if __name__ == "__main__":
         quadrature_rule="midpoint",
         plot_every=3,
     )
-    run_afem(cfg, manufactured_sine_2d)
+    run_afem(cfg, high_oscillation)
