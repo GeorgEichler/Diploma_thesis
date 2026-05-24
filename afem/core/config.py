@@ -24,3 +24,11 @@ class AFEMConfig:
     plot_every: int = 5
     output_dir: Path = Path("results")
     solver: Literal["direct"] = "direct"
+
+    # Store J(u_h) in the history without necessarily solving a reference problem.
+    compute_energy: bool = False
+    compute_reference_error: bool = False
+    # Order of the Lagrange polynomial space
+    reference_order: int = 3
+    # Order of quadrature rule for solving energy integral of reference solution
+    reference_quadrature_order: int | None = None

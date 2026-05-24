@@ -7,6 +7,11 @@ from .config import AFEMConfig
 from .mesh_factory import make_mesh
 from .solver import solve_poisson
 from .estimator import residual_estimator
+from .energy_error_norms import (
+    add_energy_error_to_history,
+    dirichlet_energy,
+    reference_solution_energy,
+)
 from .marking import doerfler_marking
 from afem.utils.plotting import plot_mesh, plot_solution_2d, plot_history
 
@@ -35,19 +40,31 @@ def run_afem(config: AFEMConfig, rhs):
         )
         eta = residual_estimator(mesh, u, rhs, fbar=fbar)
         estimator = float(np.linalg.norm(eta))
+        energy = (
+            dirichlet_energy(basis, u, rhs)
+            if config.compute_energy or config.compute_reference_error
+            else None
+        )
         ndofs = int(basis.N)
         nelems = int(mesh.t.shape[1])
         marked = doerfler_marking(eta, config.theta)
 
-        history.append({
+        entry = {
             "level": level,
             "ndofs": ndofs,
             "nelems": nelems,
             "estimator": estimator,
             "nmarked": int(marked.size),
-        })
-        print(f"level={level:02d} ndofs={ndofs:7d} nelems={nelems:7d} "
-              f"eta={estimator:.4e} marked={marked.size}")
+        }
+        if energy is not None:
+            entry["energy"] = energy
+        history.append(entry)
+
+        msg = (f"level={level:02d} ndofs={ndofs:7d} nelems={nelems:7d} "
+               f"eta={estimator:.4e} marked={marked.size}")
+        if energy is not None:
+            msg += f" J={energy:.4e}"
+        print(msg)
 
         if config.save_plots and (level % config.plot_every == 0 or level == config.max_iterations - 1):
             plot_mesh(mesh, plots / f"mesh_l{level:02d}.png")
@@ -57,7 +74,26 @@ def run_afem(config: AFEMConfig, rhs):
         if level < config.max_iterations - 1:
             mesh = _refine_marked(mesh, marked)
 
+    reference_data = None
+    if config.compute_reference_error:
+        reference_data = reference_solution_energy(
+            mesh,
+            rhs,
+            reference_order=config.reference_order,
+            quadrature_order=config.reference_quadrature_order,
+        )
+        add_energy_error_to_history(history, reference_data["reference_energy"])
+
     with open(out / "history.json", "w", encoding="utf-8") as f:
-        json.dump({"config": asdict(config), "history": history}, f, indent=2, default=str)
+        json.dump(
+            {
+                "config": asdict(config),
+                "reference": reference_data,
+                "history": history,
+            },
+            f,
+            indent=2,
+            default=str,
+        )
     plot_history(history, plots / "estimator_vs_ndofs.png")
     return mesh, u, history
