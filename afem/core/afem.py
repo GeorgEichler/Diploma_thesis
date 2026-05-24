@@ -14,8 +14,12 @@ from .energy_error_norms import (
     reference_solution_energy,
 )
 from .marking import doerfler_marking
-from afem.utils.plotting import plot_mesh, plot_solution_2d, plot_history
-
+from afem.utils.plotting import (
+    plot_history,
+    plot_mesh,
+    plot_reference_error_history,
+    plot_solution_2d,
+)
 
 def _refine_marked(mesh, marked: np.ndarray):
     if marked.size == 0:
@@ -101,4 +105,6 @@ def run_afem(config: AFEMConfig, rhs):
             default=str,
         )
     plot_history(history, plots / "estimator_vs_ndofs.png")
+    if config.compute_reference_error:
+        plot_reference_error_history(history, plots / "reference_error_vs_ndofs.png")
     return mesh, u, history
