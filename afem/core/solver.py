@@ -29,7 +29,7 @@ def make_basis(mesh, element_order: int = 1,
     dim = mesh.p.shape[0]
     element = make_element(dim, element_order)
 
-    if quadrature_rule == "default" or quadrature_rule == "custom_order":
+    if quadrature_rule == "default":
         return Basis(mesh, element, intorder=quadrature_order)
     
     # Use own defined quadrature rule

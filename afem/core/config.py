@@ -3,7 +3,8 @@ from pathlib import Path
 from typing import Literal
 
 LoadMethod = Literal["quadrature", "monte_carlo"]
-QuadratureRule = Literal["default", "midpoint", "custom_order"]
+# Default method uses scikit fems quadrature rule for computing integrals
+QuadratureRule = Literal["default", "midpoint"]
 DomainName = Literal["unit_square", "lshape", "unit_cube"]
 
 @dataclass(frozen=True)
