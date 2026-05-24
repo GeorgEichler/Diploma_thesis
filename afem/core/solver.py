@@ -1,31 +1,47 @@
 from __future__ import annotations
 import numpy as np
 from skfem import Basis, asm, condense, solve
-from skfem.element import ElementTriP1, ElementTetP1
+from skfem.element import ElementTriP1, ElementTriP2, ElementTriP3, ElementTetP1, ElementTetP2
 from .forms import laplace
 from .load import assemble_load_quadrature, assemble_load_p0, p0_rhs_by_monte_carlo
 from afem.core.quadrature import get_quadrature
 
-def make_basis(mesh, quadrature_rule = "default", quadrature_order = None):
-    # Possibility to set quadrature order and rule
-    dim = mesh.p.shape[0]
-    quadrature = get_quadrature(dim, quadrature_rule)
+def make_element(dim: int, order: int):
     if dim == 2:
-        if quadrature is not None:
-            return Basis(mesh, ElementTriP1(), quadrature=quadrature)
-        return Basis(mesh, ElementTriP1(), intorder=quadrature_order)
+        if order == 1:
+            return ElementTriP1()
+        if order == 2:
+            return ElementTriP2()
+        if order == 3:
+            return ElementTriP3()
     
     if dim == 3:
-        if quadrature is not None:
-            return Basis(mesh, ElementTetP1(), quadrature=quadrature)
-        return Basis(mesh, ElementTetP1(), intorder=quadrature_order)
-    raise ValueError("Only dim=2 or dim=3 supported.")
+        if order == 1:
+            return ElementTetP1()
+        if order == 2:
+            return ElementTetP2()
+    
+    raise ValueError(f"Unsupported element order P{order} in dim={dim}")
+
+def make_basis(mesh, element_order: int = 1,
+               quadrature_rule = "default", quadrature_order = None):
+    # Possibility to set quadrature order and rule
+    dim = mesh.p.shape[0]
+    element = make_element(dim, element_order)
+
+    if quadrature_rule == "default" or quadrature_rule == "custom_order":
+        return Basis(mesh, element, intorder=quadrature_order)
+    
+    # Use own defined quadrature rule
+    quadrature = get_quadrature(dim, quadrature_rule)
+    return Basis(mesh, element, quadrature=quadrature)
 
 
 def solve_poisson(mesh, rhs, load_method: str, mc_samples: int, mc_seed: int,
-                  quadrature_rule, quadrature_order):
+                  quadrature_rule, quadrature_order, element_order: int = 1):
     basis = make_basis(
         mesh,
+        element_order=element_order,
         quadrature_rule=quadrature_rule,
         quadrature_order=quadrature_order)
     A = asm(laplace, basis)
