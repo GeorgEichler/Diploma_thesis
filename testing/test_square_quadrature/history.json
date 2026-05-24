@@ -1,0 +1,150 @@
+{
+  "config": {
+    "domain": "unit_square",
+    "dim": 2,
+    "initial_refinements": 2,
+    "max_iterations": 12,
+    "theta": 0.5,
+    "load_method": "quadrature",
+    "quadrature_rule": "midpoint",
+    "quadrature_order": null,
+    "mc_samples_per_element": 32,
+    "mc_seed": 12345,
+    "save_plots": true,
+    "plot_every": 3,
+    "output_dir": "testing\\test_square_quadrature",
+    "solver": "direct",
+    "compute_energy": false,
+    "compute_reference_error": true,
+    "reference_order": 3,
+    "reference_quadrature_order": null
+  },
+  "reference": {
+    "reference_order": 3,
+    "reference_ndofs": 194071,
+    "reference_quadrature_order": 10,
+    "reference_energy": -2.467401100263448
+  },
+  "history": [
+    {
+      "level": 0,
+      "ndofs": 25,
+      "nelems": 32,
+      "estimator": 4.430178979801647,
+      "nmarked": 8,
+      "energy": -2.1128288048555834,
+      "h1_semi_error_sq_ref": 0.709144590815729,
+      "h1_semi_error_ref": 0.8421072323734841
+    },
+    {
+      "level": 1,
+      "ndofs": 49,
+      "nelems": 80,
+      "estimator": 2.8457239795569866,
+      "nmarked": 14,
+      "energy": -2.2548036074400732,
+      "h1_semi_error_sq_ref": 0.4251949856467494,
+      "h1_semi_error_ref": 0.6520697705359062
+    },
+    {
+      "level": 2,
+      "ndofs": 85,
+      "nelems": 144,
+      "estimator": 2.170615529738239,
+      "nmarked": 40,
+      "energy": -2.3796269485487977,
+      "h1_semi_error_sq_ref": 0.1755483034293004,
+      "h1_semi_error_ref": 0.41898484868703834
+    },
+    {
+      "level": 3,
+      "ndofs": 191,
+      "nelems": 344,
+      "estimator": 1.3224725978177823,
+      "nmarked": 100,
+      "energy": -2.4375816319460117,
+      "h1_semi_error_sq_ref": 0.05963893663487241,
+      "h1_semi_error_ref": 0.2442108446299476
+    },
+    {
+      "level": 4,
+      "ndofs": 408,
+      "nelems": 768,
+      "estimator": 0.9558520633205656,
+      "nmarked": 133,
+      "energy": -2.449830073414763,
+      "h1_semi_error_sq_ref": 0.03514205369736967,
+      "h1_semi_error_ref": 0.18746213937051306
+    },
+    {
+      "level": 5,
+      "ndofs": 679,
+      "nelems": 1292,
+      "estimator": 0.7012202059570309,
+      "nmarked": 338,
+      "energy": -2.4592454710436766,
+      "h1_semi_error_sq_ref": 0.01631125843954262,
+      "h1_semi_error_ref": 0.12771553718926534
+    },
+    {
+      "level": 6,
+      "ndofs": 1343,
+      "nelems": 2596,
+      "estimator": 0.5255181164039289,
+      "nmarked": 517,
+      "energy": -2.4623474396268117,
+      "h1_semi_error_sq_ref": 0.010107321273272518,
+      "h1_semi_error_ref": 0.10053517430865934
+    },
+    {
+      "level": 7,
+      "ndofs": 2317,
+      "nelems": 4504,
+      "estimator": 0.3847301507638923,
+      "nmarked": 912,
+      "energy": -2.4649596677808168,
+      "h1_semi_error_sq_ref": 0.004882864965262357,
+      "h1_semi_error_ref": 0.06987749970671787
+    },
+    {
+      "level": 8,
+      "ndofs": 3979,
+      "nelems": 7804,
+      "estimator": 0.2940950613233668,
+      "nmarked": 1896,
+      "energy": -2.465960696110438,
+      "h1_semi_error_sq_ref": 0.0028808083060196665,
+      "h1_semi_error_ref": 0.05367316187835096
+    },
+    {
+      "level": 9,
+      "ndofs": 7303,
+      "nelems": 14412,
+      "estimator": 0.22074633597389484,
+      "nmarked": 2570,
+      "energy": -2.4665406778710923,
+      "h1_semi_error_sq_ref": 0.0017208447847112396,
+      "h1_semi_error_ref": 0.04148306624047021
+    },
+    {
+      "level": 10,
+      "ndofs": 11921,
+      "nelems": 23600,
+      "estimator": 0.16848719649043506,
+      "nmarked": 5790,
+      "energy": -2.4669639471618026,
+      "h1_semi_error_sq_ref": 0.0008743062032907645,
+      "h1_semi_error_ref": 0.0295686692850856
+    },
+    {
+      "level": 11,
+      "ndofs": 21663,
+      "nelems": 43028,
+      "estimator": 0.12984085547273466,
+      "nmarked": 8079,
+      "energy": -2.467092706427911,
+      "h1_semi_error_sq_ref": 0.0006167876710740927,
+      "h1_semi_error_ref": 0.024835210308634247
+    }
+  ]
+}
