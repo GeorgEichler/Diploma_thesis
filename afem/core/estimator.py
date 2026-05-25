@@ -2,7 +2,7 @@ from __future__ import annotations
 import numpy as np
 from .geometry import element_geometry, facet_measure, interior_facets
 
-
+# Uses midpoint quadrature for volume terms
 def residual_estimator(mesh, u: np.ndarray, rhs, fbar: np.ndarray | None = None) -> np.ndarray:
     """Residual estimator for P1 Poisson solution.
 

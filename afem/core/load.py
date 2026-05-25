@@ -43,7 +43,9 @@ def p0_rhs_by_monte_carlo(mesh, rhs, n_samples: int, seed: int) -> np.ndarray:
     """Approximate element averages of f by Monte Carlo."""
     rng = np.random.default_rng(seed)
     pts = sample_points_in_simplices(mesh, n_samples, rng)
+    # get dimension, number of elements and number of samples
     dim, ne, ns = pts.shape
+    # flatten points to (x_1,y_1,...), evaluate and average finally over all elements
     flat = pts.reshape(dim, ne * ns)
     values = rhs(flat).reshape(ne, ns)
     return values.mean(axis=1)
@@ -52,6 +54,7 @@ def p0_rhs_by_monte_carlo(mesh, rhs, n_samples: int, seed: int) -> np.ndarray:
 def assemble_load_p0(basis, fbar: np.ndarray):
     from skfem import LinearForm
 
+    # copies constant values on each triangle to the number of quadrature points from basis.X.shape[-1] scikit-fem choses
     fbar_q = np.repeat(fbar[:, None], basis.X.shape[-1], axis=1)
 
     @LinearForm
