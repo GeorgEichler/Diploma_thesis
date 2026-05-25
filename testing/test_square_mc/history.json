@@ -1,0 +1,150 @@
+{
+  "config": {
+    "domain": "unit_square",
+    "dim": 2,
+    "initial_refinements": 2,
+    "max_iterations": 12,
+    "theta": 0.5,
+    "load_method": "monte_carlo",
+    "quadrature_rule": "default",
+    "quadrature_order": null,
+    "mc_samples_per_element": 20,
+    "mc_seed": 42,
+    "save_plots": true,
+    "plot_every": 3,
+    "output_dir": "testing\\test_square_mc",
+    "solver": "direct",
+    "compute_energy": false,
+    "compute_reference_error": true,
+    "reference_order": 3,
+    "reference_quadrature_order": null
+  },
+  "reference": {
+    "reference_order": 3,
+    "reference_ndofs": 199651,
+    "reference_quadrature_order": 10,
+    "reference_energy": -2.4674011002637224
+  },
+  "history": [
+    {
+      "level": 0,
+      "ndofs": 25,
+      "nelems": 32,
+      "estimator": 4.313380453270256,
+      "nmarked": 8,
+      "energy": -2.1073320836844314,
+      "h1_semi_error_sq_ref": 0.720138033158582,
+      "h1_semi_error_ref": 0.8486094703446233
+    },
+    {
+      "level": 1,
+      "ndofs": 49,
+      "nelems": 80,
+      "estimator": 2.824783668903143,
+      "nmarked": 14,
+      "energy": -2.253580017384318,
+      "h1_semi_error_sq_ref": 0.427642165758809,
+      "h1_semi_error_ref": 0.6539435493670757
+    },
+    {
+      "level": 2,
+      "ndofs": 85,
+      "nelems": 144,
+      "estimator": 2.1495210367618367,
+      "nmarked": 40,
+      "energy": -2.378809012968969,
+      "h1_semi_error_sq_ref": 0.17718417458950686,
+      "h1_semi_error_ref": 0.4209325059786983
+    },
+    {
+      "level": 3,
+      "ndofs": 193,
+      "nelems": 348,
+      "estimator": 1.3181654372952016,
+      "nmarked": 100,
+      "energy": -2.437314757948345,
+      "h1_semi_error_sq_ref": 0.060172684630754425,
+      "h1_semi_error_ref": 0.24530121204501706
+    },
+    {
+      "level": 4,
+      "ndofs": 413,
+      "nelems": 776,
+      "estimator": 0.9515961417088097,
+      "nmarked": 138,
+      "energy": -2.4502464106871105,
+      "h1_semi_error_sq_ref": 0.03430937915322385,
+      "h1_semi_error_ref": 0.18522791137737274
+    },
+    {
+      "level": 5,
+      "ndofs": 696,
+      "nelems": 1325,
+      "estimator": 0.6948084566651709,
+      "nmarked": 349,
+      "energy": -2.459376889864417,
+      "h1_semi_error_sq_ref": 0.016048420798610685,
+      "h1_semi_error_ref": 0.12668236182914608
+    },
+    {
+      "level": 6,
+      "ndofs": 1373,
+      "nelems": 2655,
+      "estimator": 0.5216894911737399,
+      "nmarked": 527,
+      "energy": -2.462355876549295,
+      "h1_semi_error_sq_ref": 0.010090447428854787,
+      "h1_semi_error_ref": 0.10045121915066431
+    },
+    {
+      "level": 7,
+      "ndofs": 2371,
+      "nelems": 4610,
+      "estimator": 0.3808844642852461,
+      "nmarked": 946,
+      "energy": -2.4650552027996957,
+      "h1_semi_error_sq_ref": 0.004691794928053383,
+      "h1_semi_error_ref": 0.06849667822641754
+    },
+    {
+      "level": 8,
+      "ndofs": 4117,
+      "nelems": 8078,
+      "estimator": 0.29050028541528705,
+      "nmarked": 1947,
+      "energy": -2.4659775438924805,
+      "h1_semi_error_sq_ref": 0.002847112742483837,
+      "h1_semi_error_ref": 0.05335834276365634
+    },
+    {
+      "level": 9,
+      "ndofs": 7523,
+      "nelems": 14844,
+      "estimator": 0.21797914972736265,
+      "nmarked": 2632,
+      "energy": -2.4665703493571987,
+      "h1_semi_error_sq_ref": 0.0016615018130474724,
+      "h1_semi_error_ref": 0.0407615236840758
+    },
+    {
+      "level": 10,
+      "ndofs": 12280,
+      "nelems": 24301,
+      "estimator": 0.16626878797024885,
+      "nmarked": 5994,
+      "energy": -2.4669716950652405,
+      "h1_semi_error_sq_ref": 0.0008588103969637828,
+      "h1_semi_error_ref": 0.029305467014940793
+    },
+    {
+      "level": 11,
+      "ndofs": 22296,
+      "nelems": 44255,
+      "estimator": 0.1283567688083312,
+      "nmarked": 8227,
+      "energy": -2.4670995594838527,
+      "h1_semi_error_sq_ref": 0.0006030815597393158,
+      "h1_semi_error_ref": 0.024557718944138843
+    }
+  ]
+}

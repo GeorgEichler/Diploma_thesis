@@ -24,7 +24,7 @@ def simplex_volumes(mesh) -> np.ndarray:
 def element_centroids(mesh) -> np.ndarray:
     return mesh.p[:, mesh.t].mean(axis=1)
 
-
+# Use Dirichlet sampling
 def sample_points_in_simplices(mesh, n_samples: int, rng: np.random.Generator) -> np.ndarray:
     """Uniform random points in every simplex.
 
