@@ -11,6 +11,7 @@ from .energy_error_norms import (
     add_energy_error_to_history,
     default_energy_quadrature_order,
     dirichlet_energy,
+    reference_solution_direct_errors,
     reference_solution_energy,
 )
 from .marking import doerfler_marking
@@ -35,6 +36,11 @@ def run_afem(config: AFEMConfig, rhs):
 
     mesh = make_mesh(config.domain, config.initial_refinements)
     history: list[dict] = []
+    reference_snapshots: list[dict] = []
+    use_energy_reference_error = (
+        config.compute_reference_error
+        and config.reference_error_method == "energy"
+    )
     energy_quadrature_order = config.reference_quadrature_order
     if energy_quadrature_order is None and (config.compute_energy or config.compute_reference_error):
         energy_quadrature_order = default_energy_quadrature_order(config.reference_order)
@@ -50,7 +56,7 @@ def run_afem(config: AFEMConfig, rhs):
         estimator = float(np.linalg.norm(eta))
         energy = (
             dirichlet_energy(basis, u, rhs, quadrature_order=energy_quadrature_order)
-            if config.compute_energy or config.compute_reference_error
+            if config.compute_energy or use_energy_reference_error
             else None
         )
         ndofs = int(basis.N)
@@ -67,6 +73,12 @@ def run_afem(config: AFEMConfig, rhs):
         if energy is not None:
             entry["energy"] = energy
         history.append(entry)
+        if config.compute_reference_error and config.reference_error_method == "direct":
+            reference_snapshots.append({
+                "mesh": mesh,
+                "u": u.copy(),
+                "history_entry": entry,
+            })
 
         msg = (f"level={level:02d} ndofs={ndofs:7d} nelems={nelems:7d} "
                f"eta={estimator:.4e} marked={marked.size}")
@@ -82,16 +94,28 @@ def run_afem(config: AFEMConfig, rhs):
         if level < config.max_iterations - 1:
             mesh = _refine_marked(mesh, marked)
 
-    # Compute reference solution on final mesh and energy error norm ||\nabla (u - u_h)||_{L^2}^2
+    # Compute reference solution on final mesh and append selected error data.
     reference_data = None
     if config.compute_reference_error:
-        reference_data = reference_solution_energy(
-            mesh,
-            rhs,
-            reference_order=config.reference_order,
-            quadrature_order=energy_quadrature_order,
-        )
-        add_energy_error_to_history(history, reference_data["reference_energy"])
+        if config.reference_error_method == "direct":
+            reference_data = reference_solution_direct_errors(
+                mesh,
+                rhs,
+                reference_snapshots,
+                reference_order=config.reference_order,
+                quadrature_order=energy_quadrature_order,
+            )
+        elif config.reference_error_method == "energy":
+            reference_data = reference_solution_energy(
+                mesh,
+                rhs,
+                reference_order=config.reference_order,
+                quadrature_order=energy_quadrature_order,
+            )
+            reference_data["reference_error_method"] = "energy"
+            add_energy_error_to_history(history, reference_data["reference_energy"])
+        else:
+            raise ValueError(f"Unknown reference_error_method: {config.reference_error_method}")
 
     with open(out / "history.json", "w", encoding="utf-8") as f:
         json.dump(

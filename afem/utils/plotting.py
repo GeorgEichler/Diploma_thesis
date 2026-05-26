@@ -49,19 +49,45 @@ def plot_history(history: list[dict], filename: str | Path):
     plt.close(fig)
 
 def plot_reference_error_history(history, filename: str | Path):
-    entries = [h for h in history if "h1_semi_error_ref" in h]
+    entries = [
+        h for h in history
+        if (
+            "relative_h1_error_ref" in h
+            or "relative_h1_semi_error_ref" in h
+            or "h1_semi_error_ref" in h
+        )
+    ]
     if not entries:
         return
 
     ndofs = np.array([h["ndofs"] for h in entries])
-    error = np.array([h["h1_semi_error_ref"] for h in entries])
 
     fig, ax = plt.subplots()
-    ax.loglog(ndofs, error, marker="o")
+    if "relative_h1_error_ref" in entries[0]:
+        h1_error = np.array([h["relative_h1_error_ref"] for h in entries])
+        ax.loglog(ndofs, h1_error, marker="o", label=r"relative $H^1$")
+        if "relative_l2_error_ref" in entries[0]:
+            l2_error = np.array([h["relative_l2_error_ref"] for h in entries])
+            ax.loglog(ndofs, l2_error, marker="s", label=r"relative $L^2$")
+        ax.set_ylabel("relative error")
+        ax.set_title("Relative reference error")
+        ax.legend()
+    elif "relative_h1_semi_error_ref" in entries[0]:
+        h1_error = np.array([h["relative_h1_semi_error_ref"] for h in entries])
+        ax.loglog(ndofs, h1_error, marker="o", label=r"relative $H^1$ seminorm")
+        if "relative_l2_error_ref" in entries[0]:
+            l2_error = np.array([h["relative_l2_error_ref"] for h in entries])
+            ax.loglog(ndofs, l2_error, marker="s", label=r"relative $L^2$")
+        ax.set_ylabel("relative error")
+        ax.set_title("Relative reference error")
+        ax.legend()
+    else:
+        error = np.array([h["h1_semi_error_ref"] for h in entries])
+        ax.loglog(ndofs, error, marker="o")
+        ax.set_ylabel(r"$\|\nabla(u_{\mathrm{ref}} - u_h)\|_{L^2}$")
+        ax.set_title(r"Reference energy error")
     ax.set_xlabel("ndofs")
-    ax.set_ylabel(r"$\|\nabla(u_{\mathrm{ref}} - u_h)\|_{L^2}$")
     ax.grid(True, which="both", ls=":")
-    ax.set_title(r"Reference energy error")
     fig.tight_layout()
     fig.savefig(filename, dpi=200)
     plt.close(fig)

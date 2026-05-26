@@ -6,6 +6,7 @@ LoadMethod = Literal["quadrature", "monte_carlo"]
 # Default method uses scikit fems quadrature rule for computing integrals
 QuadratureRule = Literal["default", "midpoint"]
 DomainName = Literal["unit_square", "lshape", "unit_cube"]
+ReferenceErrorMethod = Literal["direct", "energy"]
 
 @dataclass(frozen=True)
 class AFEMConfig:
@@ -29,6 +30,9 @@ class AFEMConfig:
     # Store J(u_h) in the history without necessarily solving a reference problem.
     compute_energy: bool = False
     compute_reference_error: bool = False
+    # "direct" computes relative norms against an enriched reference solution.
+    # "energy" keeps the older Dirichlet-energy based error computation.
+    reference_error_method: ReferenceErrorMethod = "direct"
     # Order of the Lagrange polynomial space
     reference_order: int = 3
     # Order of quadrature rule for solving energy integral of reference solution
