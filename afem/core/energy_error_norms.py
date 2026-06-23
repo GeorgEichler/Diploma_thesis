@@ -97,14 +97,21 @@ def reference_solution_energy_errors(
         quadrature_order=quadrature_order,
     )
 
+    # reuse stiffeness matrix and load vector for each prolonged solution
+    A_p1 = asm(laplace, basis_p1)
+    b_p1 = assemble_load_quadrature(basis_p1, rhs)
+
     for snapshot in snapshots:
         u_p1_on_ref_mesh = _prolong_p1_to_mesh(snapshot["mesh"], snapshot["u"], mesh)
-        energy = dirichlet_energy(
-            basis_p1,
-            u_p1_on_ref_mesh,
-            rhs,
-            quadrature_order=quadrature_order,
+        energy = float(
+            0.5 * u_p1_on_ref_mesh @ (A_p1 @ u_p1_on_ref_mesh) - b_p1 @ u_p1_on_ref_mesh
         )
+        #energy = dirichlet_energy(
+        #    basis_p1,
+        #    u_p1_on_ref_mesh,
+        #    rhs,
+        #    quadrature_order=quadrature_order,
+        #)
         entry = snapshot["history_entry"]
         entry["energy_reference_mesh"] = energy
         _add_energy_error_to_entry(entry, reference_data["reference_energy"], energy)
