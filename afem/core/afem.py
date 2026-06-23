@@ -8,11 +8,10 @@ from .mesh_factory import make_mesh
 from .solver import solve_poisson
 from .estimator import residual_estimator
 from .energy_error_norms import (
-    add_energy_error_to_history,
     default_energy_quadrature_order,
     dirichlet_energy,
     reference_solution_direct_errors,
-    reference_solution_energy,
+    reference_solution_energy_errors,
 )
 from .marking import doerfler_marking
 from afem.utils.plotting import (
@@ -73,7 +72,7 @@ def run_afem(config: AFEMConfig, rhs):
         if energy is not None:
             entry["energy"] = energy
         history.append(entry)
-        if config.compute_reference_error and config.reference_error_method == "direct":
+        if config.compute_reference_error:
             reference_snapshots.append({
                 "mesh": mesh,
                 "u": u.copy(),
@@ -106,14 +105,13 @@ def run_afem(config: AFEMConfig, rhs):
                 quadrature_order=energy_quadrature_order,
             )
         elif config.reference_error_method == "energy":
-            reference_data = reference_solution_energy(
+            reference_data = reference_solution_energy_errors(
                 mesh,
                 rhs,
+                reference_snapshots,
                 reference_order=config.reference_order,
                 quadrature_order=energy_quadrature_order,
             )
-            reference_data["reference_error_method"] = "energy"
-            add_energy_error_to_history(history, reference_data["reference_energy"])
         else:
             raise ValueError(f"Unknown reference_error_method: {config.reference_error_method}")
 

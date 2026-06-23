@@ -69,6 +69,50 @@ def reference_solution_energy(
     }
 
 
+def reference_solution_energy_errors(
+    mesh,
+    rhs,
+    snapshots: list[dict],
+    reference_order: int = 3,
+    quadrature_order: int | None = None,
+) -> dict:
+    """Solve a reference problem and add final-mesh energy errors.
+
+    The energy identity is only meaningful numerically if J(u_h) and J(u_ref)
+    are evaluated with the same load functional.  For oscillatory right-hand
+    sides, evaluating early iterates on their coarse meshes can under-integrate
+    the load term, so we prolong the P1 iterates to the final mesh first.
+    """
+    reference_data = reference_solution_energy(
+        mesh,
+        rhs,
+        reference_order=reference_order,
+        quadrature_order=quadrature_order,
+    )
+    quadrature_order = reference_data["reference_quadrature_order"]
+    basis_p1 = make_basis(
+        mesh,
+        element_order=1,
+        quadrature_rule="default",
+        quadrature_order=quadrature_order,
+    )
+
+    for snapshot in snapshots:
+        u_p1_on_ref_mesh = _prolong_p1_to_mesh(snapshot["mesh"], snapshot["u"], mesh)
+        energy = dirichlet_energy(
+            basis_p1,
+            u_p1_on_ref_mesh,
+            rhs,
+            quadrature_order=quadrature_order,
+        )
+        entry = snapshot["history_entry"]
+        entry["energy_reference_mesh"] = energy
+        _add_energy_error_to_entry(entry, reference_data["reference_energy"], energy)
+
+    reference_data["reference_error_method"] = "energy"
+    return reference_data
+
+
 def _integrate_squared(values: np.ndarray, dx: np.ndarray) -> float:
     return float(np.sum(values * values * dx))
 
@@ -79,15 +123,33 @@ def _relative_error(error: float, reference_norm: float) -> float:
     return 0.0 if error <= np.finfo(float).eps else float("inf")
 
 
-def _prolong_p1_to_mesh(source_mesh, source_u: np.ndarray, target_mesh) -> np.ndarray:
-    """Evaluate a nested P1 function at the vertices of target_mesh."""
+def _prolong_p1_to_mesh(
+    source_mesh,
+    source_u: np.ndarray,
+    target_mesh,
+    batch_size: int = 256,
+) -> np.ndarray:
+    """Evaluate a nested P1 function at the vertices of target_mesh.
+
+    scikit-fem's interpolator may allocate an array with shape roughly
+    (dim, source elements, target points).  Chunking target vertices avoids
+    multi-GiB allocations on late adaptive meshes.
+    """
     source_basis = make_basis(
         source_mesh,
         element_order=1,
         quadrature_rule="default",
         quadrature_order=None,
     )
-    return np.asarray(source_basis.interpolator(source_u)(target_mesh.p))
+    interpolate = source_basis.interpolator(source_u)
+    values = np.empty(target_mesh.p.shape[1], dtype=float)
+
+    # only interpolate the batches
+    for start in range(0, target_mesh.p.shape[1], batch_size):
+        stop = min(start + batch_size, target_mesh.p.shape[1])
+        values[start:stop] = np.asarray(interpolate(target_mesh.p[:, start:stop]))
+
+    return values
 
 
 def reference_solution_direct_errors(
@@ -162,9 +224,16 @@ def add_energy_error_to_history(history: list[dict], reference_energy: float) ->
         energy = entry.get("energy")
         if energy is None:
             continue
+        _add_energy_error_to_entry(entry, reference_energy, float(energy))
 
-        # With J(v) = 1/2 a(v, v) - l(v):
-        # ||grad(u - v)||^2 = 2 * (J(v) - J(u)).
-        error_sq = max(0.0, 2.0 * (float(energy) - reference_energy))
-        entry["h1_semi_error_sq_ref"] = error_sq
-        entry["h1_semi_error_ref"] = float(np.sqrt(error_sq))
+
+def _add_energy_error_to_entry(
+    entry: dict,
+    reference_energy: float,
+    energy: float,
+) -> None:
+    # With J(v) = 1/2 a(v, v) - l(v):
+    # ||grad(u - v)||^2 = 2 * (J(v) - J(u)).
+    error_sq = max(0.0, 2.0 * (energy - reference_energy))
+    entry["h1_semi_error_sq_ref"] = error_sq
+    entry["h1_semi_error_ref"] = float(np.sqrt(error_sq))
