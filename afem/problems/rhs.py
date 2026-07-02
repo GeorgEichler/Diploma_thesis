@@ -22,3 +22,11 @@ def manufactured_sine_3d(x: Array) -> Array:
 def high_oscillation(x: Array) -> Array:
     """f(x,y) = |sin(2^l * 3 * pi)|"""
     return np.abs(np.sin(np.pi * 2**5 * 3.0 * x[0]))
+
+def localized_step_2d(x: Array) -> Array:
+    """Indicator RHS: one on a small square subset of the unit square."""
+    inside = (
+        (0.45 <= x[0]) & (x[0] <= 0.46) &
+        (0.45 <= x[1]) & (x[1] <= 0.46)
+    )
+    return inside.astype(float)

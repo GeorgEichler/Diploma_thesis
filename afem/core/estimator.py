@@ -13,7 +13,7 @@ def residual_estimator(mesh, u: np.ndarray, rhs, fbar: np.ndarray | None = None)
     as an elementwise P0 approximation of f; otherwise f is evaluated at centroids.
     """
     vols, hs, grad_u, grad_lam = element_geometry(mesh, u)
-    ne = mesh.t.shape[1]
+    #ne = mesh.t.shape[1]
 
     if fbar is None:
         centroids = mesh.p[:, mesh.t].mean(axis=1)

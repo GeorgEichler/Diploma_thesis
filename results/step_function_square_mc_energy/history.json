@@ -1,0 +1,120 @@
+{
+  "config": {
+    "domain": "unit_square",
+    "dim": 2,
+    "initial_refinements": 3,
+    "max_iterations": 8,
+    "theta": 0.5,
+    "load_method": "monte_carlo",
+    "quadrature_rule": "default",
+    "quadrature_order": null,
+    "mc_samples_per_element": 20,
+    "mc_seed": 12345,
+    "save_plots": true,
+    "plot_every": 3,
+    "output_dir": "results\\step_function_square_mc_energy",
+    "solver": "direct",
+    "compute_energy": false,
+    "compute_reference_error": true,
+    "reference_error_method": "energy",
+    "reference_order": 3,
+    "reference_quadrature_order": null
+  },
+  "reference": {
+    "reference_order": 3,
+    "reference_ndofs": 625,
+    "reference_quadrature_order": 10,
+    "reference_energy": -1.3272314162036055e-07,
+    "reference_error_method": "energy"
+  },
+  "history": [
+    {
+      "level": 0,
+      "ndofs": 81,
+      "nelems": 128,
+      "estimator": 0.0,
+      "nmarked": 0,
+      "energy": 0.0,
+      "energy_reference_mesh": 0.0,
+      "h1_semi_error_sq_ref": 2.654462832407211e-07,
+      "h1_semi_error_ref": 0.0005152147933053952
+    },
+    {
+      "level": 1,
+      "ndofs": 81,
+      "nelems": 128,
+      "estimator": 0.0,
+      "nmarked": 0,
+      "energy": 0.0,
+      "energy_reference_mesh": 0.0,
+      "h1_semi_error_sq_ref": 2.654462832407211e-07,
+      "h1_semi_error_ref": 0.0005152147933053952
+    },
+    {
+      "level": 2,
+      "ndofs": 81,
+      "nelems": 128,
+      "estimator": 0.0,
+      "nmarked": 0,
+      "energy": 0.0,
+      "energy_reference_mesh": 0.0,
+      "h1_semi_error_sq_ref": 2.654462832407211e-07,
+      "h1_semi_error_ref": 0.0005152147933053952
+    },
+    {
+      "level": 3,
+      "ndofs": 81,
+      "nelems": 128,
+      "estimator": 0.0,
+      "nmarked": 0,
+      "energy": 0.0,
+      "energy_reference_mesh": 0.0,
+      "h1_semi_error_sq_ref": 2.654462832407211e-07,
+      "h1_semi_error_ref": 0.0005152147933053952
+    },
+    {
+      "level": 4,
+      "ndofs": 81,
+      "nelems": 128,
+      "estimator": 0.0,
+      "nmarked": 0,
+      "energy": 0.0,
+      "energy_reference_mesh": 0.0,
+      "h1_semi_error_sq_ref": 2.654462832407211e-07,
+      "h1_semi_error_ref": 0.0005152147933053952
+    },
+    {
+      "level": 5,
+      "ndofs": 81,
+      "nelems": 128,
+      "estimator": 0.0,
+      "nmarked": 0,
+      "energy": 0.0,
+      "energy_reference_mesh": 0.0,
+      "h1_semi_error_sq_ref": 2.654462832407211e-07,
+      "h1_semi_error_ref": 0.0005152147933053952
+    },
+    {
+      "level": 6,
+      "ndofs": 81,
+      "nelems": 128,
+      "estimator": 0.0,
+      "nmarked": 0,
+      "energy": 0.0,
+      "energy_reference_mesh": 0.0,
+      "h1_semi_error_sq_ref": 2.654462832407211e-07,
+      "h1_semi_error_ref": 0.0005152147933053952
+    },
+    {
+      "level": 7,
+      "ndofs": 81,
+      "nelems": 128,
+      "estimator": 0.0,
+      "nmarked": 0,
+      "energy": 0.0,
+      "energy_reference_mesh": 0.0,
+      "h1_semi_error_sq_ref": 2.654462832407211e-07,
+      "h1_semi_error_ref": 0.0005152147933053952
+    }
+  ]
+}

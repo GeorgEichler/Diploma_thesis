@@ -12,6 +12,8 @@ from .energy_error_norms import (
     dirichlet_energy,
     reference_solution_direct_errors,
     reference_solution_energy_errors,
+    add_energy_error_to_history,
+    reference_solution_energy,
 )
 from .marking import doerfler_marking
 from afem.utils.plotting import (
@@ -105,6 +107,8 @@ def run_afem(config: AFEMConfig, rhs):
                 quadrature_order=energy_quadrature_order,
             )
         elif config.reference_error_method == "energy":
+            # Use either reference_solution_energy -> compute energy on coarse mesh
+            # reference_solution_energy_errors -> prolong to final mesh
             reference_data = reference_solution_energy_errors(
                 mesh,
                 rhs,
@@ -112,6 +116,11 @@ def run_afem(config: AFEMConfig, rhs):
                 reference_order=config.reference_order,
                 quadrature_order=energy_quadrature_order,
             )
+            #reference_data = reference_solution_energy(mesh, rhs,
+            #                                           reference_order=config.reference_order,
+            #                                           quadrature_order=config.quadrature_order)
+            #reference_data["reference_error_method"] = "energy"
+            #add_energy_error_to_history(history, reference_data["reference_energy"])
         else:
             raise ValueError(f"Unknown reference_error_method: {config.reference_error_method}")
 
