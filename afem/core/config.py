@@ -7,6 +7,7 @@ LoadMethod = Literal["quadrature", "monte_carlo"]
 QuadratureRule = Literal["default", "midpoint"]
 DomainName = Literal["unit_square", "lshape", "unit_cube"]
 ReferenceErrorMethod = Literal["direct", "energy"]
+RefinementStrategy = Literal["adaptive", "uniform"]
 
 @dataclass(frozen=True)
 class AFEMConfig:
@@ -41,3 +42,6 @@ class AFEMConfig:
     # Volume residual integration for standard quadrature only. None follows
     # quadrature_order (or scikit-fem's default if that is also None).
     estimator_quadrature_order: int | None = None
+
+    # Uniform refinement ignores theta and refines every element at each step.
+    refinement_strategy: RefinementStrategy = "adaptive"

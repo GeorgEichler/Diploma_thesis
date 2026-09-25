@@ -84,7 +84,9 @@ def plot_reference_error_history(history, filename: str | Path):
     plt.close(fig)
 
 
-def plot_reference_error_comparison(runs: list[dict], filename: str | Path):
+def plot_reference_error_comparison(
+    runs: list[dict], filename: str | Path, *, title: str = "Load approximation comparison",
+):
     """Compare relative H1 seminorm (solid) and L2 (dashed) errors.
 
     Each run supplies a history, a mathtext label, and a color. Histories may
@@ -110,7 +112,7 @@ def plot_reference_error_comparison(runs: list[dict], filename: str | Path):
     ax.legend(handles=method_handles + norm_handles)
     ax.set_xlabel("ndofs")
     ax.set_ylabel("error")
-    ax.set_title("Load approximation comparison")
+    ax.set_title(title)
     ax.grid(True, which="both", ls=":")
     fig.tight_layout()
     fig.savefig(filename, dpi=200)

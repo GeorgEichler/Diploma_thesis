@@ -32,7 +32,68 @@ python -m experiments.run_square_quadrature
 
 Run these commands from the project root.
 
-## Compare load approximations
+## Uniform refinement
+
+Edit `RHS` and `CONFIG` in `experiments/run_uniform.py`, then run:
+
+```bash
+python -m experiments.run_uniform
+```
+
+To reuse any existing experiment with uniform refinement, replace its runner:
+
+```python
+from afem.core.ufem import run_ufem
+
+mesh, u, history = run_ufem(cfg, rhs)
+```
+
+It accepts the same `AFEMConfig` and RHS as `run_afem`, supports midpoint,
+Monte Carlo, and standard quadrature, and saves the same history and plots.
+Both `direct` and `energy` reference errors remain available. The reference
+is computed on the final uniform mesh with the configured reference degree
+and quadrature. `theta` is ignored; every element is refined, even for a zero
+estimator. Saved configuration records `refinement_strategy="uniform"`.
+
+Alternatively, set `refinement_strategy="uniform"` in an existing experiment's
+configuration, including `run_load_comparison.py`. The default is `"adaptive"`.
+Use a separate output directory and fewer iterations: every uniform 2D
+refinement quadruples the triangle count. `max_iterations=4` means four solves
+and three refinements after the initial mesh. For the load comparison, also
+set `MIDPOINT_ITERATIONS = None` to use the same short uniform run for all methods.
+
+## Compare adaptive and uniform refinement
+
+To compare **adaptive versus uniform refinement** for a single load method,
+edit `RHS`, `METHOD`, and `CONFIG` in `experiments/run_refinement_comparison.py`:
+
+```bash
+python -m experiments.run_refinement_comparison --method quadrature
+```
+
+The method choices are `midpoint`, `monte_carlo`, and `quadrature`; omitting
+`--method` uses `METHOD` in the file. `CONFIG.max_iterations` controls adaptive
+levels; `UNIFORM_ITERATIONS` controls uniform levels. Both start with the same
+mesh and use the same load, sampling, and quadrature settings.
+
+AFEM finishes and saves before uniform refinement starts. Results are stored
+under `CONFIG.output_dir/<method>/adaptive/` and `uniform/`, including histories,
+reference data, final meshes and solutions. The combined
+`<method>/refinement_errors_comparison.png` uses a color for each strategy,
+solid H1 and dashed L2 curves against DOFs. These are relative H1 seminorm and
+L2 errors despite the shortened labels. Each strategy uses its own enriched
+final-mesh reference, not a common reference solution.
+
+Replot without solving using the same selected method:
+
+```bash
+python -m experiments.run_refinement_comparison --method quadrature --plot-only
+```
+
+Different methods use separate folders; rerunning the same method overwrites
+its results. Choose another `CONFIG.output_dir` to retain earlier runs.
+
+## Compare load methods with the same refinement strategy
 
 Set `RHS` and the shared `CONFIG` in `experiments/run_load_comparison.py`, then run:
 

@@ -36,6 +36,11 @@ def _refine_marked(mesh, marked: np.ndarray):
 
 
 def run_afem(config: AFEMConfig, rhs):
+    """Run P1 FEM with the configured refinement strategy and error evaluation."""
+    if config.refinement_strategy not in ("adaptive", "uniform"):
+        raise ValueError(f"Unknown refinement_strategy: {config.refinement_strategy}")
+    if config.max_iterations < 1:
+        raise ValueError("max_iterations must be at least 1")
     out = Path(config.output_dir)
     plots = out / "plots"
     plots.mkdir(parents=True, exist_ok=True)
@@ -75,7 +80,11 @@ def run_afem(config: AFEMConfig, rhs):
         )
         ndofs = int(basis.N)
         nelems = int(mesh.t.shape[1])
-        marked = doerfler_marking(eta, config.theta)
+        marked = (
+            np.arange(nelems, dtype=int)
+            if config.refinement_strategy == "uniform"
+            else doerfler_marking(eta, config.theta)
+        )
 
         entry = {
             "level": level,
@@ -106,7 +115,11 @@ def run_afem(config: AFEMConfig, rhs):
                 plot_solution_2d(mesh, u, plots / f"solution_l{level:02d}.png")
 
         if level < config.max_iterations - 1:
-            mesh = _refine_marked(mesh, marked)
+            mesh = (
+                mesh.refined()
+                if config.refinement_strategy == "uniform"
+                else _refine_marked(mesh, marked)
+            )
 
     # Compute reference solution on final mesh and append selected error data.
     reference_data = None

@@ -1,0 +1,80 @@
+{
+  "config": {
+    "domain": "lshape",
+    "dim": 2,
+    "initial_refinements": 2,
+    "max_iterations": 5,
+    "theta": 0.5,
+    "load_method": "monte_carlo",
+    "quadrature_rule": "default",
+    "quadrature_order": 2,
+    "mc_samples_per_element": 20,
+    "mc_seed": 123,
+    "save_plots": true,
+    "plot_every": 2,
+    "output_dir": "results\\refinement_comparison\\monte_carlo\\uniform",
+    "solver": "direct",
+    "compute_energy": false,
+    "compute_reference_error": true,
+    "reference_error_method": "direct",
+    "reference_order": 3,
+    "reference_quadrature_order": 19,
+    "estimator_quadrature_order": 10,
+    "refinement_strategy": "uniform"
+  },
+  "reference": {
+    "reference_error_method": "direct",
+    "reference_order": 3,
+    "reference_ndofs": 111361,
+    "reference_quadrature_order": 19,
+    "reference_l2_norm": 0.09174370406609354,
+    "reference_h1_semi_norm": 0.2947352728305692
+  },
+  "history": [
+    {
+      "level": 0,
+      "ndofs": 65,
+      "nelems": 96,
+      "estimator": 0.49120718703167937,
+      "nmarked": 96,
+      "relative_l2_error_ref": 0.13389779297963836,
+      "relative_h1_semi_error_ref": 0.34288633708724015
+    },
+    {
+      "level": 1,
+      "ndofs": 225,
+      "nelems": 384,
+      "estimator": 0.2670697377312604,
+      "nmarked": 384,
+      "relative_l2_error_ref": 0.035431951609999596,
+      "relative_h1_semi_error_ref": 0.18695907150141325
+    },
+    {
+      "level": 2,
+      "ndofs": 833,
+      "nelems": 1536,
+      "estimator": 0.14100313666432598,
+      "nmarked": 1536,
+      "relative_l2_error_ref": 0.015020327792089392,
+      "relative_h1_semi_error_ref": 0.1033025179536011
+    },
+    {
+      "level": 3,
+      "ndofs": 3201,
+      "nelems": 6144,
+      "estimator": 0.07531141759989299,
+      "nmarked": 6144,
+      "relative_l2_error_ref": 0.004574905065125428,
+      "relative_h1_semi_error_ref": 0.058230799399418984
+    },
+    {
+      "level": 4,
+      "ndofs": 12545,
+      "nelems": 24576,
+      "estimator": 0.040832699403227216,
+      "nmarked": 24576,
+      "relative_l2_error_ref": 0.0017987915441939491,
+      "relative_h1_semi_error_ref": 0.03312586410552027
+    }
+  ]
+}

@@ -1,0 +1,71 @@
+{
+  "config": {
+    "domain": "lshape",
+    "dim": 2,
+    "initial_refinements": 2,
+    "max_iterations": 4,
+    "theta": 0.5,
+    "load_method": "quadrature",
+    "quadrature_rule": "default",
+    "quadrature_order": 2,
+    "mc_samples_per_element": 20,
+    "mc_seed": 123,
+    "save_plots": true,
+    "plot_every": 1,
+    "output_dir": "results\\uniform_quadrature",
+    "solver": "direct",
+    "compute_energy": false,
+    "compute_reference_error": true,
+    "reference_error_method": "direct",
+    "reference_order": 3,
+    "reference_quadrature_order": 19,
+    "estimator_quadrature_order": 10,
+    "refinement_strategy": "uniform"
+  },
+  "reference": {
+    "reference_error_method": "direct",
+    "reference_order": 3,
+    "reference_ndofs": 28033,
+    "reference_quadrature_order": 19,
+    "reference_l2_norm": 0.09192236413714981,
+    "reference_h1_semi_norm": 0.29532205525233535
+  },
+  "history": [
+    {
+      "level": 0,
+      "ndofs": 65,
+      "nelems": 96,
+      "estimator": 0.48935362859045783,
+      "nmarked": 96,
+      "relative_l2_error_ref": 0.9999999999999833,
+      "relative_h1_semi_error_ref": 0.9999999999999835
+    },
+    {
+      "level": 1,
+      "ndofs": 225,
+      "nelems": 384,
+      "estimator": 0.22723503627356598,
+      "nmarked": 384,
+      "relative_l2_error_ref": 0.9999999999999848,
+      "relative_h1_semi_error_ref": 0.9999999999999846
+    },
+    {
+      "level": 2,
+      "ndofs": 833,
+      "nelems": 1536,
+      "estimator": 0.09991263826655856,
+      "nmarked": 1536,
+      "relative_l2_error_ref": 0.9999999999999846,
+      "relative_h1_semi_error_ref": 0.9999999999999843
+    },
+    {
+      "level": 3,
+      "ndofs": 3201,
+      "nelems": 6144,
+      "estimator": 0.08072773969229903,
+      "nmarked": 6144,
+      "relative_l2_error_ref": 0.041326240198876346,
+      "relative_h1_semi_error_ref": 0.07238055314176886
+    }
+  ]
+}
