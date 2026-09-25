@@ -19,7 +19,9 @@
     "reference_error_method": "direct",
     "reference_order": 3,
     "reference_quadrature_order": 19,
-    "estimator_quadrature_order": 10
+    "estimator_quadrature_order": 10,
+    "refinement_strategy": "adaptive",
+    "save_history_plots": true
   },
   "reference": {
     "reference_error_method": "direct",

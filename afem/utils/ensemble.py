@@ -103,9 +103,9 @@ def plot_ensemble(histories, statistics, output_dir, *, summary="median",
         handles = [Line2D([], [], color=color, linestyle=style,
                           label=label + (f" ({summary})" if summary != "none" else ""))
                    for _, label, color, style, p in METRICS if p == panel]
-        if show_individual:
+        if panel == 1 and show_individual:
             handles.append(Line2D([], [], color="gray", alpha=0.3, label="Individual runs"))
-        if show_band:
+        if panel == 1 and show_band:
             handles.append(Patch(color="gray", alpha=0.16, label="25–75% of runs"))
         ax.legend(handles=handles)
         ax.grid(True, which="both", ls=":")

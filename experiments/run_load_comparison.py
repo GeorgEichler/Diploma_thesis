@@ -33,18 +33,18 @@ CONFIG = AFEMConfig(
     theta=0.5,
     mc_samples_per_element=20,
     mc_seed=123,
-    quadrature_order=2,  # 10 is the default value for the quadrature
+    quadrature_order=10,  # 10 is the default value for the quadrature
     estimator_quadrature_order=10,  # integrate f**2; ignored for midpoint/MC
     compute_reference_error=True,
     reference_quadrature_order=19, # 10 is the default value for the quadrature
     reference_error_method="direct",
     save_plots=True,
     plot_every=3,
-    output_dir=Path("results/load_comparison_low_quadrature"),
+    output_dir=Path("results/load_comparison_high_quadrature"),
 )
 
 # Use more adaptive levels for midpoint; None uses CONFIG.max_iterations.
-MIDPOINT_ITERATIONS = 12
+MIDPOINT_ITERATIONS = 14
 
 # Tuple order is also execution order.
 METHODS = (

@@ -79,8 +79,10 @@ the next starts. All use the same RHS, initial mesh, refinement settings, and
 reference settings. `CONFIG.refinement_strategy="uniform"` is also supported.
 
 The study creates two PNGs in `results/mc_sample_comparison`: `sample_errors.png`
-and `sample_estimator.png`. Both use progressively darker blue for larger sample
-counts, identified by a discrete colorbar. The error plot has solid H1 and dashed
+and `sample_estimator.png`. Both use progressively darker shades of seaborn's
+`crest` colormap for larger sample
+counts, identified by a continuous logarithmic colorbar with ticks at the actual
+sample counts (up to eight labels). The error plot has solid H1 and dashed
 L2 curves and a "relative error" axis. Values remain relative H1 seminorm and L2
 errors, despite the shortened H1 label. Curves are plotted at each run's own DOFs;
 they are not averaged or interpolated. No titles, PDFs, solution-field images,

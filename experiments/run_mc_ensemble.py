@@ -15,7 +15,7 @@ from afem.utils.plotting import plot_mesh
 
 RHS = high_oscillation
 NUM_RUNS = 10
-SUMMARY = "median"  # "mean", "median", or "none"
+SUMMARY = "mean"  # "mean", "median", or "none"
 SHOW_INDIVIDUAL = True  # Faint error/estimator trajectories, not solution fields.
 SHOW_BAND = True  # Pointwise 25–75% spread across runs.
 SAVE_FINAL_MESHES = False

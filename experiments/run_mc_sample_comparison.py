@@ -21,11 +21,11 @@ from afem.utils.sample_comparison import plot_sample_comparison
 
 RHS = high_oscillation
 # One full run per entry; each count is fixed throughout that run's AFEM levels.
-SAMPLE_COUNTS = [1, 5, 20]
+SAMPLE_COUNTS = [1, 5, 10, 20, 50, 100]
 CONFIG = AFEMConfig(
     domain="lshape",
     dim=2,
-    initial_refinements=2,
+    initial_refinements=3,
     max_iterations=8,
     theta=0.5,
     load_method="monte_carlo",

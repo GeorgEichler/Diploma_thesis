@@ -20,16 +20,16 @@ import numpy as np
 from afem.core.afem import run_afem
 from afem.core.config import AFEMConfig
 from afem.core.ufem import run_ufem
-from afem.problems.rhs import high_oscillation
+from afem.problems.rhs import constant_one, high_oscillation
 from afem.utils.plotting import plot_reference_error_comparison
 
-METHOD = "monte_carlo"  # "midpoint", "monte_carlo", or "quadrature"
-RHS = high_oscillation
+METHOD = "quadrature"  # "midpoint", "monte_carlo", or "quadrature"
+RHS = constant_one
 UNIFORM_ITERATIONS = 5  # Includes initial solve; triangle count grows by 4 each step.
 CONFIG = AFEMConfig(
     domain="lshape",
-    dim=2,
-    initial_refinements=2, #reduced so we do not get that much elements for uniform refinement
+    dim=3,
+    initial_refinements=3, #reduced so we do not get that much elements for uniform refinement
     max_iterations=9,  # Adaptive iterations; independent of UNIFORM_ITERATIONS.
     theta=0.5,
     quadrature_order=2,
@@ -42,7 +42,7 @@ CONFIG = AFEMConfig(
     reference_quadrature_order=19,
     save_plots=True,
     plot_every=2,
-    output_dir=Path("results/refinement_comparison"),
+    output_dir=Path("results/refinement_comparison_quadrature"),
 )
 
 METHODS = {

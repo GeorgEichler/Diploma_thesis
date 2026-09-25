@@ -2,7 +2,10 @@
   "sample_counts": [
     1,
     5,
-    20
+    10,
+    20,
+    50,
+    100
   ],
   "base_seed": 123,
   "seed_stride": 8,
@@ -22,9 +25,24 @@
       "directory": "samples_5"
     },
     {
+      "samples": 10,
+      "seed": 203,
+      "directory": "samples_10"
+    },
+    {
       "samples": 20,
       "seed": 283,
       "directory": "samples_20"
+    },
+    {
+      "samples": 50,
+      "seed": 523,
+      "directory": "samples_50"
+    },
+    {
+      "samples": 100,
+      "seed": 923,
+      "directory": "samples_100"
     }
   ]
 }

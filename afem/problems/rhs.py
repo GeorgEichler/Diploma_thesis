@@ -6,7 +6,7 @@ Array = np.ndarray
 
 def constant_one(x: Array) -> Array:
     """f(x)=1. x has shape (dim, npoints)."""
-    return np.ones(x.shape[1])
+    return np.ones_like(x[0])
 
 def oscillatory_2d(x: Array, k: float = 12.0) -> Array:
     """Smooth oscillatory right-hand side on 2D domains."""

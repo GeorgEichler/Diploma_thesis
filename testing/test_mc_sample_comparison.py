@@ -44,8 +44,8 @@ class SampleComparisonTests(unittest.TestCase):
                 return original(config, rhs)
 
             with patch.object(experiment, "run_afem", side_effect=checked_run):
-                paths = experiment.run_comparison(cfg, manufactured_sine_2d, sample_counts=[4, 1, 2])
-            self.assertEqual([c.mc_samples_per_element for c in calls], [4, 1, 2])
+                paths = experiment.run_comparison(cfg, manufactured_sine_2d, sample_counts=[10, 1, 2])
+            self.assertEqual([c.mc_samples_per_element for c in calls], [10, 1, 2])
             used_seeds = []
             for config in calls:
                 count = config.mc_samples_per_element
@@ -74,7 +74,7 @@ class SampleComparisonTests(unittest.TestCase):
                 self.assertEqual(len(error_ax.lines), 6)
                 self.assertEqual(len(residual_ax.lines), 3)
                 brightness = []
-                for index, count in enumerate([1, 2, 4]):
+                for index, count in enumerate([1, 2, 10]):
                     h1, l2 = error_ax.lines[2*index:2*index+2]
                     self.assertEqual(h1.get_linestyle(), "-")
                     self.assertEqual(l2.get_linestyle(), "--")
@@ -87,7 +87,13 @@ class SampleComparisonTests(unittest.TestCase):
                 for fig in figures:
                     self.assertEqual(fig.axes[0].get_title(), "")
                     self.assertIsNone(fig._suptitle)
-                    self.assertEqual([t.get_text() for t in fig.axes[1].get_yticklabels()], ["1", "2", "4"])
+                    self.assertEqual([t.get_text() for t in fig.axes[1].get_yticklabels()], ["1", "2", "10"])
+                    self.assertEqual(fig.axes[1].get_yscale(), "log")
+                    color_scale = fig.axes[1].collections[-1]
+                    # Two samples should lie at log10(2), not halfway by rank.
+                    self.assertAlmostEqual(float(color_scale.norm(2)), np.log10(2))
+                    np.testing.assert_allclose(error_ax.lines[2].get_color(),
+                                               color_scale.cmap(color_scale.norm(2)))
             plt.close("all")
 
     def test_interrupted_study_can_plot_one_completed_count(self):

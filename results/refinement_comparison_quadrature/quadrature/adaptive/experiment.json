@@ -1,0 +1,11 @@
+{
+  "method": "quadrature",
+  "refinement_strategy": "adaptive",
+  "rhs_module": "afem.problems.rhs",
+  "rhs_name": "constant_one",
+  "error_norms": [
+    "relative_h1_seminorm",
+    "relative_l2"
+  ],
+  "reference_strategy": "enriched final mesh of each refinement strategy"
+}
