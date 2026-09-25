@@ -30,10 +30,14 @@ class AFEMConfig:
     # Store J(u_h) in the history without necessarily solving a reference problem.
     compute_energy: bool = False
     compute_reference_error: bool = False
-    # "direct" computes relative norms against an enriched reference solution.
+    # "direct" computes relative L2 and H1 seminorm errors against an enriched reference solution.
     # "energy" keeps the older Dirichlet-energy based error computation.
     reference_error_method: ReferenceErrorMethod = "direct"
     # Order of the Lagrange polynomial space
     reference_order: int = 3
     # Order of quadrature rule for solving energy integral of reference solution
     reference_quadrature_order: int | None = None
+
+    # Volume residual integration for standard quadrature only. None follows
+    # quadrature_order (or scikit-fem's default if that is also None).
+    estimator_quadrature_order: int | None = None

@@ -1,27 +1,32 @@
 from __future__ import annotations
-from dataclasses import asdict
+
 import json
+from dataclasses import asdict
 from pathlib import Path
+
 import numpy as np
-from .config import AFEMConfig
-from .mesh_factory import make_mesh
-from .solver import solve_poisson
-from .estimator import residual_estimator
-from .energy_error_norms import (
-    default_energy_quadrature_order,
-    dirichlet_energy,
-    reference_solution_direct_errors,
-    reference_solution_energy_errors,
-    add_energy_error_to_history,
-    reference_solution_energy,
-)
-from .marking import doerfler_marking
+
 from afem.utils.plotting import (
     plot_history,
     plot_mesh,
     plot_reference_error_history,
     plot_solution_2d,
 )
+
+from .config import AFEMConfig
+from .energy_error_norms import (
+    add_energy_error_to_history,
+    default_energy_quadrature_order,
+    dirichlet_energy,
+    reference_solution_direct_errors,
+    reference_solution_energy,
+    reference_solution_energy_errors,
+)
+from .estimator import residual_estimator
+from .marking import doerfler_marking
+from .mesh_factory import make_mesh
+from .solver import solve_poisson
+
 
 def _refine_marked(mesh, marked: np.ndarray):
     if marked.size == 0:
@@ -53,7 +58,15 @@ def run_afem(config: AFEMConfig, rhs):
             mesh, rhs, config.load_method, config.mc_samples_per_element, seed_l,
             quadrature_rule=config.quadrature_rule, quadrature_order=config.quadrature_order
         )
-        eta = residual_estimator(mesh, u, rhs, fbar=fbar)
+        eta = residual_estimator(
+            mesh, u, rhs, fbar=fbar,
+            quadrature_rule=config.quadrature_rule,
+            quadrature_order=(
+                config.estimator_quadrature_order
+                if config.estimator_quadrature_order is not None
+                else config.quadrature_order
+            ),
+        )
         estimator = float(np.linalg.norm(eta))
         energy = (
             dirichlet_energy(basis, u, rhs, quadrature_order=energy_quadrature_order)

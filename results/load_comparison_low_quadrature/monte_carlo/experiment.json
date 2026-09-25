@@ -1,0 +1,10 @@
+{
+  "method": "monte_carlo",
+  "rhs_module": "afem.problems.rhs",
+  "rhs_name": "high_oscillation",
+  "error_norms": [
+    "relative_h1_seminorm",
+    "relative_l2"
+  ],
+  "reference_strategy": "enriched final mesh of each method"
+}

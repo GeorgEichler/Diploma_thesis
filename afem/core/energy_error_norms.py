@@ -166,7 +166,7 @@ def reference_solution_direct_errors(
     reference_order: int = 3,
     quadrature_order: int | None = None,
 ) -> dict:
-    """Solve an enriched reference problem and add relative direct errors.
+    """Solve an enriched reference problem and add relative L2 and H1 seminorm errors.
 
     The AFEM iterates are P1 functions on meshes produced by refinement of the
     final mesh lineage.  They are therefore prolonged exactly by evaluating the
@@ -196,7 +196,6 @@ def reference_solution_direct_errors(
     ref_field = basis_ref.interpolate(u_ref)
     ref_l2_norm = np.sqrt(_integrate_squared(ref_field.value, basis_ref.dx))
     ref_h1_semi_norm = np.sqrt(_integrate_squared(ref_field.grad, basis_ref.dx))
-    ref_h1_norm = np.sqrt(ref_l2_norm * ref_l2_norm + ref_h1_semi_norm * ref_h1_semi_norm)
 
     for snapshot in snapshots:
         u_p1_on_ref_mesh = _prolong_p1_to_mesh(snapshot["mesh"], snapshot["u"], mesh)
@@ -204,11 +203,9 @@ def reference_solution_direct_errors(
 
         l2_error = np.sqrt(_integrate_squared(ref_field.value - uh_field.value, basis_ref.dx))
         h1_semi_error = np.sqrt(_integrate_squared(ref_field.grad - uh_field.grad, basis_ref.dx))
-        h1_error = np.sqrt(l2_error * l2_error + h1_semi_error * h1_semi_error)
 
         entry = snapshot["history_entry"]
         entry["relative_l2_error_ref"] = _relative_error(l2_error, ref_l2_norm)
-        entry["relative_h1_error_ref"] = _relative_error(h1_error, ref_h1_norm)
         entry["relative_h1_semi_error_ref"] = _relative_error(
             h1_semi_error,
             ref_h1_semi_norm,
@@ -220,7 +217,6 @@ def reference_solution_direct_errors(
         "reference_ndofs": int(basis_ref.N),
         "reference_quadrature_order": int(quadrature_order),
         "reference_l2_norm": float(ref_l2_norm),
-        "reference_h1_norm": float(ref_h1_norm),
         "reference_h1_semi_norm": float(ref_h1_semi_norm),
     }
 

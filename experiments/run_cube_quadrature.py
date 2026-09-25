@@ -1,4 +1,4 @@
-from pathlib import Path
+from pathlib import Path  # noqa: I001
 from afem.core.config import AFEMConfig
 from afem.core.afem import run_afem
 from afem.problems.rhs import manufactured_sine_3d

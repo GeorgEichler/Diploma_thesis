@@ -1,6 +1,7 @@
 from pathlib import Path
-from afem.core.config import AFEMConfig
+
 from afem.core.afem import run_afem
+from afem.core.config import AFEMConfig
 from afem.problems.rhs import high_oscillation
 
 if __name__ == "__main__":
