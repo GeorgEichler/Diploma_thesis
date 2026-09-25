@@ -62,6 +62,90 @@ refinement quadruples the triangle count. `max_iterations=4` means four solves
 and three refinements after the initial mesh. For the load comparison, also
 set `MIDPOINT_ITERATIONS = None` to use the same short uniform run for all methods.
 
+## Monte Carlo sample-count study
+
+Set `SAMPLE_COUNTS = [1, 2, 5, 10, 20]`, `RHS`, and `CONFIG` in
+`experiments/run_mc_sample_comparison.py`, then run:
+
+```bash
+python -m experiments.run_mc_sample_comparison
+python -m experiments.run_mc_sample_comparison --samples 1 5 20 100
+python -m experiments.run_mc_sample_comparison --plot-only
+```
+
+Each array entry runs a separate AFEM experiment with that fixed number of
+samples per element at every level. Runs execute in array order and save before
+the next starts. All use the same RHS, initial mesh, refinement settings, and
+reference settings. `CONFIG.refinement_strategy="uniform"` is also supported.
+
+The study creates two PNGs in `results/mc_sample_comparison`: `sample_errors.png`
+and `sample_estimator.png`. Both use progressively darker blue for larger sample
+counts, identified by a discrete colorbar. The error plot has solid H1 and dashed
+L2 curves and a "relative error" axis. Values remain relative H1 seminorm and L2
+errors, despite the shortened H1 label. Curves are plotted at each run's own DOFs;
+they are not averaged or interpolated. No titles, PDFs, solution-field images,
+mesh images, or per-run convergence plots are generated.
+
+`samples_<count>/history.json` saves configuration, reference data, and history;
+`final_solution.npz` stores the final mesh and solution arrays. The manifest
+`sample_comparison.json` lists completed runs, allowing plotting after an
+interruption and excluding stale run folders. Seeds use
+`base + sample_count * max_iterations + level`, giving disjoint level-seed ranges
+and reproducibility independent of list order. Rerunning overwrites the current
+study; use a different output directory to retain earlier results.
+
+This is one random realization per sample count, not an ensemble average.
+Each count also uses its own enriched final-mesh reference; neither monotone
+errors with increasing samples nor a common exact reference are assumed.
+
+## Multiple Monte Carlo realizations
+
+Edit `RHS`, `CONFIG`, and `NUM_RUNS` in `experiments/run_mc_ensemble.py` or run:
+
+```bash
+python -m experiments.run_mc_ensemble --runs 20
+python -m experiments.run_mc_ensemble --plot-only --summary mean --no-show-individual
+```
+
+The first command runs AFEM sequentially with Monte Carlo loads. Each run's
+history, configuration, reference data, and final mesh/solution arrays are
+saved in `results/mc_ensemble/run_001/`, `run_002/`, etc., before starting the
+next. `ensemble.json` records the base seed and completed runs. Seeds follow
+`base_seed + run_index * max_iterations + level`, avoiding reused seeds across
+different runs and levels. The ensemble is reproducible for the same settings.
+
+Two separate PNGs are saved: `ensemble_errors.png` (with the axis labelled
+"relative error") and `ensemble_estimator.png`. Options can be set in the file
+or on the command line:
+
+- `--summary median`, `mean`, or `none` selects the central curve.
+- `--show-individual` / `--no-show-individual` controls faint individual curves.
+- `--show-band` / `--no-show-band` controls the pointwise 25–75% spread band.
+- `--save-final-meshes` optionally saves one final mesh image per run. No
+  solution-field images, intermediate meshes, or per-run convergence plots
+  are generated. Final numerical mesh/solution arrays are always saved.
+- `--plot-only` changes curve presentation without solving, and can plot the
+  completed runs of an interrupted ensemble. It does not regenerate mesh images.
+
+Adaptive meshes differ between runs. To summarize errors at comparable sizes,
+we interpolate each run's error/estimator linearly against log(DOFs) on 100
+log-spaced points in the range reached by **every** run, without extrapolation.
+For repeated DOF counts the last observation is used for statistics; individual
+curves retain all observations. A single common DOF count is also supported.
+Means, medians, and quartiles are saved to `ensemble_statistics.json`.
+The band describes variation between runs, not uncertainty in the mean.
+Zeros remain in saved data but are omitted on logarithmic plots.
+
+These are averages of convergence curves, not averages of solution fields.
+Error values remain relative H1 seminorm and L2 errors despite shortened plot
+labels. Each realization uses its own enriched final-mesh reference; reference
+integration errors can affect the apparent spread. Uniform refinement is also
+available through `CONFIG.refinement_strategy`, using fewer levels.
+
+Rerunning in the same output folder replaces the ensemble manifest and run
+results. Only runs in the new manifest are included, even if old run folders
+remain. Choose a new `CONFIG.output_dir` to preserve an earlier experiment.
+
 ## Compare adaptive and uniform refinement
 
 To compare **adaptive versus uniform refinement** for a single load method,

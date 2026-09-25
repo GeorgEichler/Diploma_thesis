@@ -45,3 +45,6 @@ class AFEMConfig:
 
     # Uniform refinement ignores theta and refines every element at each step.
     refinement_strategy: RefinementStrategy = "adaptive"
+
+    # Allow ensemble experiments to save numerical histories without per-run plots.
+    save_history_plots: bool = True

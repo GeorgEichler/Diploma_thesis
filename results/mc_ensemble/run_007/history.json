@@ -1,0 +1,108 @@
+{
+  "config": {
+    "domain": "lshape",
+    "dim": 2,
+    "initial_refinements": 2,
+    "max_iterations": 8,
+    "theta": 0.5,
+    "load_method": "monte_carlo",
+    "quadrature_rule": "default",
+    "quadrature_order": null,
+    "mc_samples_per_element": 20,
+    "mc_seed": 171,
+    "save_plots": false,
+    "plot_every": 5,
+    "output_dir": "results\\mc_ensemble\\run_007",
+    "solver": "direct",
+    "compute_energy": false,
+    "compute_reference_error": true,
+    "reference_error_method": "direct",
+    "reference_order": 3,
+    "reference_quadrature_order": 19,
+    "estimator_quadrature_order": null,
+    "refinement_strategy": "adaptive",
+    "save_history_plots": false
+  },
+  "reference": {
+    "reference_error_method": "direct",
+    "reference_order": 3,
+    "reference_ndofs": 72451,
+    "reference_quadrature_order": 19,
+    "reference_l2_norm": 0.09173038336010006,
+    "reference_h1_semi_norm": 0.29467100312992534
+  },
+  "history": [
+    {
+      "level": 0,
+      "ndofs": 65,
+      "nelems": 96,
+      "estimator": 0.4918844796872254,
+      "nmarked": 35,
+      "relative_l2_error_ref": 0.1361754916313374,
+      "relative_h1_semi_error_ref": 0.34246226739946156
+    },
+    {
+      "level": 1,
+      "ndofs": 167,
+      "nelems": 287,
+      "estimator": 0.32416694848767585,
+      "nmarked": 53,
+      "relative_l2_error_ref": 0.04250988807385012,
+      "relative_h1_semi_error_ref": 0.2104182790876474
+    },
+    {
+      "level": 2,
+      "ndofs": 297,
+      "nelems": 535,
+      "estimator": 0.2341644792022858,
+      "nmarked": 121,
+      "relative_l2_error_ref": 0.02996468768678488,
+      "relative_h1_semi_error_ref": 0.15142468494810604
+    },
+    {
+      "level": 3,
+      "ndofs": 590,
+      "nelems": 1099,
+      "estimator": 0.1670128366352052,
+      "nmarked": 231,
+      "relative_l2_error_ref": 0.016083912908779904,
+      "relative_h1_semi_error_ref": 0.10580151563623243
+    },
+    {
+      "level": 4,
+      "ndofs": 1148,
+      "nelems": 2170,
+      "estimator": 0.11932653397818706,
+      "nmarked": 487,
+      "relative_l2_error_ref": 0.00818638973205339,
+      "relative_h1_semi_error_ref": 0.0755452246082748
+    },
+    {
+      "level": 5,
+      "ndofs": 2219,
+      "nelems": 4282,
+      "estimator": 0.08638736789386366,
+      "nmarked": 893,
+      "relative_l2_error_ref": 0.005085127677219612,
+      "relative_h1_semi_error_ref": 0.05395224814524767
+    },
+    {
+      "level": 6,
+      "ndofs": 4274,
+      "nelems": 8301,
+      "estimator": 0.06207690172502719,
+      "nmarked": 1843,
+      "relative_l2_error_ref": 0.002626091426337937,
+      "relative_h1_semi_error_ref": 0.038838790296483926
+    },
+    {
+      "level": 7,
+      "ndofs": 8157,
+      "nelems": 15994,
+      "estimator": 0.04555900780301912,
+      "nmarked": 3196,
+      "relative_l2_error_ref": 0.0011944885667119084,
+      "relative_h1_semi_error_ref": 0.02808215691676062
+    }
+  ]
+}

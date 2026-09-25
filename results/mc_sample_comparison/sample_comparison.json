@@ -1,0 +1,30 @@
+{
+  "sample_counts": [
+    1,
+    5,
+    20
+  ],
+  "base_seed": 123,
+  "seed_stride": 8,
+  "seed_policy": "base + sample_count * max_iterations + level; independent of list order",
+  "rhs_module": "afem.problems.rhs",
+  "rhs_name": "high_oscillation",
+  "reference_strategy": "separate enriched final-mesh reference per sample count",
+  "completed_runs": [
+    {
+      "samples": 1,
+      "seed": 131,
+      "directory": "samples_1"
+    },
+    {
+      "samples": 5,
+      "seed": 163,
+      "directory": "samples_5"
+    },
+    {
+      "samples": 20,
+      "seed": 283,
+      "directory": "samples_20"
+    }
+  ]
+}

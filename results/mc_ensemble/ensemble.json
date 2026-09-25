@@ -1,0 +1,51 @@
+{
+  "requested_runs": 10,
+  "base_seed": 123,
+  "seed_stride": 8,
+  "seed_policy": "base + run_index * max_iterations + level; no reused level seeds",
+  "rhs_module": "afem.problems.rhs",
+  "rhs_name": "high_oscillation",
+  "reference_strategy": "separate enriched final-mesh reference for each run",
+  "completed_runs": [
+    {
+      "directory": "run_001",
+      "seed": 123
+    },
+    {
+      "directory": "run_002",
+      "seed": 131
+    },
+    {
+      "directory": "run_003",
+      "seed": 139
+    },
+    {
+      "directory": "run_004",
+      "seed": 147
+    },
+    {
+      "directory": "run_005",
+      "seed": 155
+    },
+    {
+      "directory": "run_006",
+      "seed": 163
+    },
+    {
+      "directory": "run_007",
+      "seed": 171
+    },
+    {
+      "directory": "run_008",
+      "seed": 179
+    },
+    {
+      "directory": "run_009",
+      "seed": 187
+    },
+    {
+      "directory": "run_010",
+      "seed": 195
+    }
+  ]
+}

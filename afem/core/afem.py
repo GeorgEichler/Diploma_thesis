@@ -161,7 +161,8 @@ def run_afem(config: AFEMConfig, rhs):
             indent=2,
             default=str,
         )
-    plot_history(history, plots / "estimator_vs_ndofs.png")
-    if config.compute_reference_error:
+    if config.save_history_plots:
+        plot_history(history, plots / "estimator_vs_ndofs.png")
+    if config.save_history_plots and config.compute_reference_error:
         plot_reference_error_history(history, plots / "reference_error_vs_ndofs.png")
     return mesh, u, history
