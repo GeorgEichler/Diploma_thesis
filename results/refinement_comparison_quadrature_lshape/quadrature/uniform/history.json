@@ -1,0 +1,81 @@
+{
+  "config": {
+    "domain": "lshape",
+    "dim": 3,
+    "initial_refinements": 3,
+    "max_iterations": 5,
+    "theta": 0.5,
+    "load_method": "quadrature",
+    "quadrature_rule": "default",
+    "quadrature_order": 2,
+    "mc_samples_per_element": 20,
+    "mc_seed": 123,
+    "save_plots": true,
+    "plot_every": 2,
+    "output_dir": "results\\refinement_comparison_quadrature_lshape\\quadrature\\uniform",
+    "solver": "direct",
+    "compute_energy": false,
+    "compute_reference_error": true,
+    "reference_error_method": "direct",
+    "reference_order": 3,
+    "reference_quadrature_order": 19,
+    "estimator_quadrature_order": 10,
+    "refinement_strategy": "uniform",
+    "save_history_plots": true
+  },
+  "reference": {
+    "reference_error_method": "direct",
+    "reference_order": 3,
+    "reference_ndofs": 443905,
+    "reference_quadrature_order": 19,
+    "reference_l2_norm": 0.4133846249047544,
+    "reference_h1_semi_norm": 1.3078986921965516
+  },
+  "history": [
+    {
+      "level": 0,
+      "ndofs": 225,
+      "nelems": 384,
+      "estimator": 1.1083330992438654,
+      "nmarked": 384,
+      "relative_l2_error_ref": 0.03196001443635841,
+      "relative_h1_semi_error_ref": 0.16675968618869397
+    },
+    {
+      "level": 1,
+      "ndofs": 833,
+      "nelems": 1536,
+      "estimator": 0.5794877919654441,
+      "nmarked": 1536,
+      "relative_l2_error_ref": 0.010418358282258055,
+      "relative_h1_semi_error_ref": 0.09136916670897137
+    },
+    {
+      "level": 2,
+      "ndofs": 3201,
+      "nelems": 6144,
+      "estimator": 0.3059226757145703,
+      "nmarked": 6144,
+      "relative_l2_error_ref": 0.0035985925246259406,
+      "relative_h1_semi_error_ref": 0.05132897699978522
+    },
+    {
+      "level": 3,
+      "ndofs": 12545,
+      "nelems": 24576,
+      "estimator": 0.1644752296342179,
+      "nmarked": 24576,
+      "relative_l2_error_ref": 0.0012893045612277954,
+      "relative_h1_semi_error_ref": 0.029484372441469543
+    },
+    {
+      "level": 4,
+      "ndofs": 49665,
+      "nelems": 98304,
+      "estimator": 0.09053105771709807,
+      "nmarked": 98304,
+      "relative_l2_error_ref": 0.0004647144492429218,
+      "relative_h1_semi_error_ref": 0.017134476933973204
+    }
+  ]
+}

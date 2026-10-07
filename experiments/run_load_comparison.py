@@ -19,12 +19,12 @@ import numpy as np
 
 from afem.core.afem import run_afem
 from afem.core.config import AFEMConfig
-from afem.problems.rhs import high_oscillation
+from afem.problems.rhs import high_oscillation, low_oscillation
 from afem.utils.plotting import plot_reference_error_comparison
 
 
 # Select the same RHS and common settings for all three methods here.
-RHS = high_oscillation
+RHS = low_oscillation
 CONFIG = AFEMConfig(
     domain="lshape",
     dim=2,
@@ -40,17 +40,21 @@ CONFIG = AFEMConfig(
     reference_error_method="direct",
     save_plots=True,
     plot_every=3,
-    output_dir=Path("results/load_comparison_high_quadrature"),
+    output_dir=Path("results/load_comparison_low_quadrature_low_oscillation"),
 )
 
 # Use more adaptive levels for midpoint; None uses CONFIG.max_iterations.
-MIDPOINT_ITERATIONS = 14
+MIDPOINT_ITERATIONS = 8
+# Add optional convergence guides, e.g. (1.0 / 2.0,); empty means none.
+REFERENCE_RATES: tuple[float, ...] = ()
+# Optionally provide one (ndof, error) start point for each rate.
+REFERENCE_STARTS: tuple[tuple[float, float], ...] | None = None
 
 # Tuple order is also execution order.
 METHODS = (
-    ("midpoint", "quadrature", "midpoint", r"$\Pi_0 f$", "tab:blue"),
-    ("monte_carlo", "monte_carlo", "default", r"$\hat{\Pi}_0 f$", "tab:orange"),
-    ("quadrature", "quadrature", "default", r"$f$", "tab:green"),
+    ("midpoint", "quadrature", "midpoint", r"$\Pi_0 f$", "tab:blue", "x"),
+    ("monte_carlo", "monte_carlo", "default", r"$\hat{\Pi}_0 f$", "tab:orange", "s"),
+    ("quadrature", "quadrature", "default", r"$f$", "tab:green", "o"),
 )
 
 
@@ -58,15 +62,23 @@ def plot_saved_comparison(output_dir: Path):
     """Replot completed methods without rerunning any numerical solves."""
     output_dir = Path(output_dir)
     runs = []
-    for name, _, _, label, color in METHODS:
+    for name, _, _, label, color, marker in METHODS:
         history_path = output_dir / name / "history.json"
         if history_path.exists():
             data = json.loads(history_path.read_text(encoding="utf-8"))
-            runs.append({"history": data["history"], "label": label, "color": color})
+            runs.append({
+                "history": data["history"],
+                "label": label,
+                "color": color,
+                "marker": marker,
+            })
     if not runs:
         raise FileNotFoundError(f"No method histories found in {output_dir}")
     plot_path = output_dir / "relative_errors_comparison.png"
-    plot_reference_error_comparison(runs, plot_path)
+    plot_reference_error_comparison(
+        runs, plot_path, reference_rates=REFERENCE_RATES,
+        reference_starts=REFERENCE_STARTS,
+    )
     return plot_path
 
 
@@ -75,7 +87,7 @@ def run_comparison(config: AFEMConfig, rhs, *, midpoint_iterations: int | None =
     if midpoint_iterations is not None and midpoint_iterations < 1:
         raise ValueError("midpoint_iterations must be at least 1")
     output_dir = Path(config.output_dir)
-    for name, load_method, quadrature_rule, _, _ in METHODS:
+    for name, load_method, quadrature_rule, _, _, _ in METHODS:
         method_config = replace(
             config,
             load_method=load_method,

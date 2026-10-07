@@ -20,15 +20,17 @@ import numpy as np
 from afem.core.afem import run_afem
 from afem.core.config import AFEMConfig
 from afem.core.ufem import run_ufem
-from afem.problems.rhs import constant_one, high_oscillation
+from afem.problems.rhs import constant_one, high_oscillation, rhs_lshape
 from afem.utils.plotting import plot_reference_error_comparison
 
 METHOD = "quadrature"  # "midpoint", "monte_carlo", or "quadrature"
-RHS = constant_one
+RHS = rhs_lshape
 UNIFORM_ITERATIONS = 5  # Includes initial solve; triangle count grows by 4 each step.
+REFERENCE_RATES = (1.0 / 2.0, 1.0 / 3.0)
+REFERENCE_STARTS = ((300.0, 0.1), (300.0, 0.2)) # referecnce points slopes ndof^{-1/2}/^{-1/3}
 CONFIG = AFEMConfig(
     domain="lshape",
-    dim=3,
+    dim=2,
     initial_refinements=3, #reduced so we do not get that much elements for uniform refinement
     max_iterations=9,  # Adaptive iterations; independent of UNIFORM_ITERATIONS.
     theta=0.5,
@@ -42,7 +44,7 @@ CONFIG = AFEMConfig(
     reference_quadrature_order=19,
     save_plots=True,
     plot_every=2,
-    output_dir=Path("results/refinement_comparison_quadrature"),
+    output_dir=Path("results/refinement_comparison_quadrature_lshape"),
 )
 
 METHODS = {
@@ -77,6 +79,8 @@ def plot_saved_comparison(output_dir: Path, method: str):
     plot_path = method_dir / "refinement_errors_comparison.png"
     plot_reference_error_comparison(
         runs, plot_path, title=f"Adaptive vs. uniform refinement: {method_label}",
+        reference_rates=REFERENCE_RATES,
+        reference_starts=REFERENCE_STARTS,
     )
     return plot_path
 
