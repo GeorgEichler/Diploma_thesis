@@ -57,8 +57,8 @@ class SampleComparisonTests(unittest.TestCase):
                 self.assertEqual(list(config.output_dir.rglob("*.png")), [])
             self.assertEqual(len(used_seeds), len(set(used_seeds)))
             self.assertTrue(all(p.is_file() for p in paths))
-            self.assertEqual([p.name for p in paths], ["sample_errors.png", "sample_estimator.png"])
-            self.assertEqual(list(out.rglob("*.pdf")), [])
+            self.assertEqual([p.name for p in paths], ["sample_errors.pdf", "sample_estimator.pdf"])
+            self.assertEqual(list(out.rglob("*.png")), [])
 
             stale = out / "samples_99"
             stale.mkdir()
@@ -87,14 +87,17 @@ class SampleComparisonTests(unittest.TestCase):
                 for fig in figures:
                     self.assertEqual(fig.axes[0].get_title(), "")
                     self.assertIsNone(fig._suptitle)
-                    self.assertEqual([t.get_text() for t in fig.axes[1].get_yticklabels()], ["1", "2", "10"])
-                    self.assertEqual(fig.axes[1].get_yscale(), "log")
+                    self.assertEqual([t.get_text() for t in fig.axes[1].get_xticklabels()], ["1", "2", "10"])
+                    self.assertEqual(fig.axes[1].get_xscale(), "log")
                     color_scale = fig.axes[1].collections[-1]
                     # Two samples should lie at log10(2), not halfway by rank.
                     self.assertAlmostEqual(float(color_scale.norm(2)), np.log10(2))
                     np.testing.assert_allclose(error_ax.lines[2].get_color(),
                                                color_scale.cmap(color_scale.norm(2)))
             plt.close("all")
+            png_paths = experiment.plot_saved_comparison(out, save_png=True)
+            self.assertEqual(png_paths, paths)
+            self.assertTrue(all(p.with_suffix(".png").is_file() for p in paths))
 
     def test_interrupted_study_can_plot_one_completed_count(self):
         with tempfile.TemporaryDirectory() as tmp:

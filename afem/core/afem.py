@@ -110,9 +110,9 @@ def run_afem(config: AFEMConfig, rhs):
         print(msg)
 
         if config.save_plots and (level % config.plot_every == 0 or level == config.max_iterations - 1):
-            plot_mesh(mesh, plots / f"mesh_l{level:02d}.png")
+            plot_mesh(mesh, plots / f"mesh_l{level:02d}.pdf", save_pdf=config.save_pdf, save_png=config.save_png)
             if mesh.p.shape[0] == 2:
-                plot_solution_2d(mesh, u, plots / f"solution_l{level:02d}.png")
+                plot_solution_2d(mesh, u, plots / f"solution_l{level:02d}.pdf", save_pdf=config.save_pdf, save_png=config.save_png)
 
         if level < config.max_iterations - 1:
             mesh = (
@@ -162,7 +162,8 @@ def run_afem(config: AFEMConfig, rhs):
             default=str,
         )
     if config.save_history_plots:
-        plot_history(history, plots / "estimator_vs_ndofs.png")
+        plot_history(history, plots / "estimator_vs_ndofs.pdf", save_pdf=config.save_pdf, save_png=config.save_png)
     if config.save_history_plots and config.compute_reference_error:
-        plot_reference_error_history(history, plots / "reference_error_vs_ndofs.png")
+        plot_reference_error_history(history, plots / "reference_error_vs_ndofs.pdf",
+                                     save_pdf=config.save_pdf, save_png=config.save_png)
     return mesh, u, history

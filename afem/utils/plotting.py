@@ -5,6 +5,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.lines import Line2D
 
+from afem.utils.figure_export import save_figure
+from afem.utils.publication_style import PANEL_FIGSIZE, paper_style
+
 
 def _format_2d_domain_axes(ax, mesh):
     """Align a two-dimensional domain with five evenly spaced axis ticks."""
@@ -19,9 +22,10 @@ def _format_2d_domain_axes(ax, mesh):
     ax.set_aspect("equal")
 
 
-def plot_mesh(mesh, filename: str | Path):
+@paper_style
+def plot_mesh(mesh, filename: str | Path, *, save_pdf: bool = True, save_png: bool = False):
     filename = Path(filename)
-    fig = plt.figure(figsize=(6, 5))
+    fig = plt.figure(figsize=PANEL_FIGSIZE)
     if mesh.p.shape[0] == 2:
         ax = fig.add_subplot(111)
         ax.triplot(mesh.p[0], mesh.p[1], mesh.t.T, linewidth=0.4)
@@ -32,37 +36,47 @@ def plot_mesh(mesh, filename: str | Path):
         ax.scatter(mesh.p[0], mesh.p[1], mesh.p[2], s=2)
         ax.set_title(f"3D mesh vertices: {mesh.p.shape[1]}")
     fig.tight_layout()
-    fig.savefig(filename, dpi=200)
+    path = save_figure(fig, filename, save_pdf=save_pdf, save_png=save_png)
     plt.close(fig)
+    return path
 
 
-def plot_solution_2d(mesh, u: np.ndarray, filename: str | Path):
+@paper_style
+def plot_solution_2d(mesh, u: np.ndarray, filename: str | Path, *,
+                     save_pdf: bool = True, save_png: bool = False):
     filename = Path(filename)
-    fig, ax = plt.subplots(figsize=(6, 5))
+    fig, ax = plt.subplots(figsize=PANEL_FIGSIZE)
     pc = ax.tripcolor(mesh.p[0], mesh.p[1], mesh.t.T, u, shading="gouraud")
     ax.triplot(mesh.p[0], mesh.p[1], mesh.t.T, linewidth=0.2, alpha=0.4)
     _format_2d_domain_axes(ax, mesh)
-    fig.colorbar(pc, ax=ax)
+    colorbar = fig.colorbar(pc, ax=ax)
+    if colorbar.solids is not None:
+        colorbar.solids.set_rasterized(False)
     fig.tight_layout()
-    fig.savefig(filename, dpi=200)
+    path = save_figure(fig, filename, save_pdf=save_pdf, save_png=save_png)
     plt.close(fig)
+    return path
 
 
-def plot_history(history: list[dict], filename: str | Path):
+@paper_style
+def plot_history(history: list[dict], filename: str | Path, *,
+                 save_pdf: bool = True, save_png: bool = False):
     filename = Path(filename)
     ndofs = np.array([h["ndofs"] for h in history])
     eta = np.array([h["estimator"] for h in history])
-    fig, ax = plt.subplots(figsize=(6, 4))
+    fig, ax = plt.subplots(figsize=PANEL_FIGSIZE)
     ax.loglog(ndofs, eta, marker="o")
-    ax.set_xlabel("ndofs")
+    ax.set_xlabel(r"$\mathrm{ndof}$")
     ax.set_ylabel(r"Residual $\eta$")
-    ax.grid(True, which="both", ls=":")
     ax.set_title(r"Residual estimator $\eta$")
     fig.tight_layout()
-    fig.savefig(filename, dpi=200)
+    path = save_figure(fig, filename, save_pdf=save_pdf, save_png=save_png)
     plt.close(fig)
+    return path
 
-def plot_reference_error_history(history, filename: str | Path):
+@paper_style
+def plot_reference_error_history(history, filename: str | Path, *,
+                                 save_pdf: bool = True, save_png: bool = False):
     entries = [
         h for h in history
         if (
@@ -75,7 +89,7 @@ def plot_reference_error_history(history, filename: str | Path):
 
     ndofs = np.array([h["ndofs"] for h in entries])
 
-    fig, ax = plt.subplots()
+    fig, ax = plt.subplots(figsize=PANEL_FIGSIZE)
     if "relative_h1_semi_error_ref" in entries[0]:
         h1_semi_error = np.array([h["relative_h1_semi_error_ref"] for h in entries])
         ax.loglog(ndofs, h1_semi_error, marker="o", label=r"relative $H^1$ seminorm")
@@ -90,17 +104,19 @@ def plot_reference_error_history(history, filename: str | Path):
         ax.loglog(ndofs, error, marker="o")
         ax.set_ylabel(r"$\|\nabla(u_{\mathrm{ref}} - u_h)\|_{L^2}$")
         ax.set_title(r"Reference energy error")
-    ax.set_xlabel("ndofs")
-    ax.grid(True, which="both", ls=":")
+    ax.set_xlabel(r"$\mathrm{ndof}$")
     fig.tight_layout()
-    fig.savefig(filename, dpi=200)
+    path = save_figure(fig, filename, save_pdf=save_pdf, save_png=save_png)
     plt.close(fig)
+    return path
 
 
+@paper_style
 def plot_reference_error_comparison(
     runs: list[dict], filename: str | Path, *, title: str = "Load approximation comparison",
     reference_rates: tuple[float, ...] = (),
     reference_starts: tuple[tuple[float, float], ...] | None = None,
+    save_pdf: bool = True, save_png: bool = False,
 ):
     """Compare relative H1 seminorm (solid) and L2 (dashed) errors.
 
@@ -113,7 +129,7 @@ def plot_reference_error_comparison(
     """
     filename = Path(filename)
     filename.parent.mkdir(parents=True, exist_ok=True)
-    fig, ax = plt.subplots(figsize=(8, 5))
+    fig, ax = plt.subplots(figsize=PANEL_FIGSIZE)
     method_handles = []
     all_ndofs = []
     all_errors = []
@@ -165,10 +181,10 @@ def plot_reference_error_comparison(
             reference_handles.append(handle)
 
     ax.legend(handles=method_handles + reference_handles)
-    ax.set_xlabel("ndofs")
+    ax.set_xlabel(r"$\mathrm{ndof}$")
     ax.set_ylabel("error")
     ax.set_title(title)
-    ax.grid(True, which="both", ls=":")
     fig.tight_layout()
-    fig.savefig(filename, dpi=200)
+    path = save_figure(fig, filename, save_pdf=save_pdf, save_png=save_png)
     plt.close(fig)
+    return path

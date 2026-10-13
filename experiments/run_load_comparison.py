@@ -58,7 +58,7 @@ METHODS = (
 )
 
 
-def plot_saved_comparison(output_dir: Path):
+def plot_saved_comparison(output_dir: Path, *, save_pdf=True, save_png=False):
     """Replot completed methods without rerunning any numerical solves."""
     output_dir = Path(output_dir)
     runs = []
@@ -74,12 +74,11 @@ def plot_saved_comparison(output_dir: Path):
             })
     if not runs:
         raise FileNotFoundError(f"No method histories found in {output_dir}")
-    plot_path = output_dir / "relative_errors_comparison.png"
-    plot_reference_error_comparison(
+    plot_path = output_dir / "relative_errors_comparison.pdf"
+    return plot_reference_error_comparison(
         runs, plot_path, reference_rates=REFERENCE_RATES,
-        reference_starts=REFERENCE_STARTS,
+        reference_starts=REFERENCE_STARTS, save_pdf=save_pdf, save_png=save_png,
     )
-    return plot_path
 
 
 def run_comparison(config: AFEMConfig, rhs, *, midpoint_iterations: int | None = None):
@@ -121,16 +120,24 @@ def run_comparison(config: AFEMConfig, rhs, *, midpoint_iterations: int | None =
         print(f"Saved {name} results to {method_config.output_dir}", flush=True)
         del mesh, u
 
-    plot_path = plot_saved_comparison(output_dir)
-    print(f"Saved comparison to {plot_path}", flush=True)
+    plot_path = plot_saved_comparison(output_dir, save_pdf=config.save_pdf, save_png=config.save_png)
+    if plot_path is not None:
+        print(f"Saved comparison to {plot_path}", flush=True)
     return plot_path
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--plot-only", action="store_true", help="Plot saved histories without solving.")
+    parser.add_argument("--png", action=argparse.BooleanOptionalAction, default=CONFIG.save_png,
+                        help="Save 600 dpi PNG images (disabled by default).")
+    parser.add_argument("--pdf", action=argparse.BooleanOptionalAction, default=CONFIG.save_pdf,
+                        help="Save vector PDFs (enabled by default).")
     args = parser.parse_args()
     if args.plot_only:
-        print(plot_saved_comparison(CONFIG.output_dir))
+        path = plot_saved_comparison(CONFIG.output_dir, save_pdf=args.pdf, save_png=args.png)
+        if path is not None:
+            print(path)
     else:
-        run_comparison(CONFIG, RHS, midpoint_iterations=MIDPOINT_ITERATIONS)
+        run_comparison(replace(CONFIG, save_pdf=args.pdf, save_png=args.png), RHS,
+                       midpoint_iterations=MIDPOINT_ITERATIONS)

@@ -1,10 +1,20 @@
 from __future__ import annotations
+
 import numpy as np
 from skfem import Basis, asm, condense, solve
-from skfem.element import ElementTriP1, ElementTriP2, ElementTriP3, ElementTetP1, ElementTetP2
-from .forms import laplace
-from .load import assemble_load_quadrature, assemble_load_p0, p0_rhs_by_monte_carlo
+from skfem.element import (
+    ElementTetP1,
+    ElementTetP2,
+    ElementTriP1,
+    ElementTriP2,
+    ElementTriP3,
+)
+
 from afem.core.quadrature import get_quadrature
+
+from .forms import laplace
+from .load import assemble_load_p0, assemble_load_quadrature, p0_rhs_by_monte_carlo
+
 
 def make_element(dim: int, order: int):
     if dim == 2:

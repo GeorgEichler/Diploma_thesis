@@ -48,3 +48,7 @@ class AFEMConfig:
 
     # Allow ensemble experiments to save numerical histories without per-run plots.
     save_history_plots: bool = True
+
+    # Independently enable vector PDF and 600 dpi PNG exports.
+    save_pdf: bool = True
+    save_png: bool = False

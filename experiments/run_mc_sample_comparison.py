@@ -58,7 +58,7 @@ def _write_manifest(path, data):
     temporary.replace(path)
 
 
-def plot_saved_comparison(output_dir):
+def plot_saved_comparison(output_dir, *, save_pdf=True, save_png=False):
     """Replot only completed runs listed in the current study manifest."""
     out = Path(output_dir)
     manifest = json.loads((out / "sample_comparison.json").read_text(encoding="utf-8"))
@@ -66,7 +66,7 @@ def plot_saved_comparison(output_dir):
     for run in manifest["completed_runs"]:
         data = json.loads((out / run["directory"] / "history.json").read_text(encoding="utf-8"))
         runs.append({"samples": run["samples"], "history": data["history"]})
-    return plot_sample_comparison(runs, out)
+    return plot_sample_comparison(runs, out, save_pdf=save_pdf, save_png=save_png)
 
 
 def run_comparison(config: AFEMConfig, rhs, *, sample_counts):
@@ -103,7 +103,7 @@ def run_comparison(config: AFEMConfig, rhs, *, sample_counts):
         _write_manifest(out / "sample_comparison.json", manifest)
         print(f"Saved results to {cfg.output_dir}", flush=True)
         del mesh, u
-    paths = plot_saved_comparison(out)
+    paths = plot_saved_comparison(out, save_pdf=config.save_pdf, save_png=config.save_png)
     for path in paths:
         print(f"Saved comparison to {path}", flush=True)
     return paths
@@ -113,9 +113,14 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--samples", type=int, nargs="+", default=SAMPLE_COUNTS)
     parser.add_argument("--plot-only", action="store_true", help="Replot saved data without solving.")
+    parser.add_argument("--png", action=argparse.BooleanOptionalAction, default=CONFIG.save_png,
+                        help="Save 600 dpi PNG images (disabled by default).")
+    parser.add_argument("--pdf", action=argparse.BooleanOptionalAction, default=CONFIG.save_pdf,
+                        help="Save vector PDFs (enabled by default).")
     args = parser.parse_args()
     if args.plot_only:
-        for path in plot_saved_comparison(CONFIG.output_dir):
+        for path in plot_saved_comparison(CONFIG.output_dir, save_pdf=args.pdf, save_png=args.png):
             print(path)
     else:
-        run_comparison(CONFIG, RHS, sample_counts=args.samples)
+        run_comparison(replace(CONFIG, save_pdf=args.pdf, save_png=args.png), RHS,
+                       sample_counts=args.samples)

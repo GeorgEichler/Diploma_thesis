@@ -64,7 +64,7 @@ def _method_settings(method: str):
     return METHODS[method]
 
 
-def plot_saved_comparison(output_dir: Path, method: str):
+def plot_saved_comparison(output_dir: Path, method: str, *, save_pdf=True, save_png=False):
     """Replot the completed strategies using only their saved histories."""
     _, _, method_label = _method_settings(method)
     method_dir = Path(output_dir) / method
@@ -76,13 +76,12 @@ def plot_saved_comparison(output_dir: Path, method: str):
             runs.append({"history": data["history"], "label": label, "color": color})
     if not runs:
         raise FileNotFoundError(f"No refinement histories found in {method_dir}")
-    plot_path = method_dir / "refinement_errors_comparison.png"
-    plot_reference_error_comparison(
+    plot_path = method_dir / "refinement_errors_comparison.pdf"
+    return plot_reference_error_comparison(
         runs, plot_path, title=f"Adaptive vs. uniform refinement: {method_label}",
         reference_rates=REFERENCE_RATES,
-        reference_starts=REFERENCE_STARTS,
+        reference_starts=REFERENCE_STARTS, save_pdf=save_pdf, save_png=save_png,
     )
-    return plot_path
 
 
 def run_comparison(config: AFEMConfig, rhs, *, method: str, uniform_iterations: int):
@@ -121,8 +120,9 @@ def run_comparison(config: AFEMConfig, rhs, *, method: str, uniform_iterations: 
         print(f"Saved {label} results to {run_config.output_dir}", flush=True)
         del mesh, u
 
-    plot_path = plot_saved_comparison(config.output_dir, method)
-    print(f"Saved comparison to {plot_path}", flush=True)
+    plot_path = plot_saved_comparison(config.output_dir, method, save_pdf=config.save_pdf, save_png=config.save_png)
+    if plot_path is not None:
+        print(f"Saved comparison to {plot_path}", flush=True)
     return plot_path
 
 
@@ -130,8 +130,16 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--method", choices=tuple(METHODS), default=METHOD)
     parser.add_argument("--plot-only", action="store_true", help="Replot saved results without solving.")
+    parser.add_argument("--png", action=argparse.BooleanOptionalAction, default=CONFIG.save_png,
+                        help="Save 600 dpi PNG images (disabled by default).")
+    parser.add_argument("--pdf", action=argparse.BooleanOptionalAction, default=CONFIG.save_pdf,
+                        help="Save vector PDFs (enabled by default).")
     args = parser.parse_args()
     if args.plot_only:
-        print(plot_saved_comparison(CONFIG.output_dir, args.method))
+        path = plot_saved_comparison(CONFIG.output_dir, args.method,
+                                     save_pdf=args.pdf, save_png=args.png)
+        if path is not None:
+            print(path)
     else:
-        run_comparison(CONFIG, RHS, method=args.method, uniform_iterations=UNIFORM_ITERATIONS)
+        run_comparison(replace(CONFIG, save_pdf=args.pdf, save_png=args.png), RHS,
+                       method=args.method, uniform_iterations=UNIFORM_ITERATIONS)

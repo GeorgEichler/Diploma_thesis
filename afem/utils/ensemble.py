@@ -7,11 +7,15 @@ import numpy as np
 from matplotlib.lines import Line2D
 from matplotlib.patches import Patch
 
+from afem.utils.comparison_layout import comparison_figure
+from afem.utils.figure_export import save_figure
+from afem.utils.publication_style import paper_style
+
 
 METRICS = (
-    ("relative_h1_semi_error_ref", r"$H^1$ norm", "tab:blue", "-", 0),
-    ("relative_l2_error_ref", r"$L^2$ norm", "tab:orange", "--", 0),
-    ("estimator", r"Residual $\eta$", "tab:green", "-", 1),
+    ("relative_h1_semi_error_ref", r"$H^1$ seminorm", "#0072B2", "-", 0),
+    ("relative_l2_error_ref", r"$L^2$ norm", "#D55E00", "--", 0),
+    ("estimator", r"Residual $\eta$", "#009E73", "-", 1),
 )
 
 
@@ -67,14 +71,15 @@ def aggregate_histories(histories: list[list[dict]], grid_points: int = 100) -> 
     return result
 
 
+@paper_style
 def plot_ensemble(histories, statistics, output_dir, *, summary="median",
-                  show_individual=True, show_band=True):
-    """Save separate error and residual-estimator PNGs and return their paths."""
+                  show_individual=True, show_band=True, save_pdf=True, save_png=False):
+    """Export enabled formats and return PDF paths, or PNG paths for PNG-only output."""
     if summary not in ("mean", "median", "none"):
         raise ValueError("summary must be 'mean', 'median', or 'none'")
     if summary == "none" and not show_individual and not show_band:
         raise ValueError("Enable individual curves, a summary, or the spread band")
-    figures, axes = zip(*(plt.subplots(figsize=(7, 5)) for _ in range(2)))
+    figures, axes, _ = zip(*(comparison_figure() for _ in range(2)))
     grid = np.asarray(statistics["ndofs"])
 
     def positive(values):
@@ -86,37 +91,44 @@ def plot_ensemble(histories, statistics, output_dir, *, summary="median",
         if show_individual:
             for history in histories:
                 ax.plot([h["ndofs"] for h in history], positive([h[key] for h in history]),
-                        color=color, linestyle=style, alpha=0.18, linewidth=1)
+                        color=color, linestyle=style, alpha=0.12, linewidth=0.45)
         stats = statistics["metrics"][key]
         if show_band:
             ax.fill_between(grid, positive(stats["q25"]), positive(stats["q75"]),
-                            color=color, alpha=0.16)
+                            color=color, alpha=0.16, linewidth=0)
         if summary != "none":
             ax.plot(grid, positive(stats[summary]), color=color, linestyle=style,
-                    linewidth=2, marker="o" if len(grid) == 1 else None)
+                    linewidth=1, marker="o" if len(grid) == 1 else None)
 
     for panel, ax in enumerate(axes):
         ax.set_xscale("log")
         ax.set_yscale("log")
-        ax.set_xlabel("ndofs")
+        ax.set_xlabel(r"$\mathrm{ndof}$")
         ax.set_ylabel("relative error" if panel == 0 else r"Residual $\eta$")
         handles = [Line2D([], [], color=color, linestyle=style,
                           label=label + (f" ({summary})" if summary != "none" else ""))
                    for _, label, color, style, p in METRICS if p == panel]
-        if panel == 1 and show_individual:
-            handles.append(Line2D([], [], color="gray", alpha=0.3, label="Individual runs"))
-        if panel == 1 and show_band:
-            handles.append(Patch(color="gray", alpha=0.16, label="25–75% of runs"))
         ax.legend(handles=handles)
-        ax.grid(True, which="both", ls=":")
+        spread_handles = []
+        if show_individual:
+            spread_handles.append(Line2D([], [], color="gray", alpha=0.5,
+                                         linewidth=0.45, label="Individual runs"))
+        if show_band:
+            spread_handles.append(Patch(color="gray", alpha=0.16, label="25-75% of runs"))
+        if spread_handles:
+            figures[panel].legend(handles=spread_handles, loc="lower left",
+                                  bbox_to_anchor=(0.22, 0.06), frameon=False,
+                                  borderaxespad=0)
         if any(h[key] == 0 for history in histories for h in history
                for key, _, _, _, p in METRICS if p == panel):
-            ax.text(0.02, 0.02, "Zero values omitted on log scale", transform=ax.transAxes, fontsize=8)
+            ax.text(0.02, 0.02, "Zero values omitted on log scale", transform=ax.transAxes, fontsize=6)
     output_dir = Path(output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
-    paths = (output_dir / "ensemble_errors.png", output_dir / "ensemble_estimator.png")
+    paths = (output_dir / "ensemble_errors.pdf", output_dir / "ensemble_estimator.pdf")
+    saved_paths = []
     for fig, path in zip(figures, paths):
-        fig.tight_layout()
-        fig.savefig(path, dpi=200)
+        saved_path = save_figure(fig, path, save_pdf=save_pdf, save_png=save_png)
+        if saved_path is not None:
+            saved_paths.append(saved_path)
         plt.close(fig)
-    return paths
+    return tuple(saved_paths)

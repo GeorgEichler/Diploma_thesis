@@ -60,9 +60,10 @@ class EnsembleTests(unittest.TestCase):
                 return original(config, rhs)
 
             with patch.object(experiment, "run_afem", side_effect=checked_run):
-                pngs = experiment.run_ensemble(cfg, manufactured_sine_2d, num_runs=2)
-            self.assertEqual([p.name for p in pngs], ["ensemble_errors.png", "ensemble_estimator.png"])
-            self.assertTrue(all(p.is_file() for p in pngs))
+                paths = experiment.run_ensemble(cfg, manufactured_sine_2d, num_runs=2)
+            self.assertEqual([p.name for p in paths], ["ensemble_errors.pdf", "ensemble_estimator.pdf"])
+            self.assertTrue(all(p.is_file() for p in paths))
+            self.assertEqual(list(out.rglob("*.png")), [])
             self.assertEqual([c.mc_seed for c in calls], [cfg.mc_seed, cfg.mc_seed + 2])
             for config in calls:
                 self.assertEqual(list(config.output_dir.rglob("*.png")), [])
@@ -81,7 +82,10 @@ class EnsembleTests(unittest.TestCase):
                     experiment.plot_saved_ensemble(out, summary=summary,
                                                    show_individual=individuals, show_band=band)
             self.assertEqual(json.loads((out / "ensemble_statistics.json").read_text())["nruns"], 2)
-            self.assertEqual(list(out.rglob("*.pdf")), [])
+            self.assertEqual(list(out.rglob("*.png")), [])
+            png_paths = experiment.plot_saved_ensemble(out, save_png=True)
+            self.assertEqual(png_paths, paths)
+            self.assertTrue(all(p.with_suffix(".png").is_file() for p in paths))
 
     def test_optional_final_mesh_and_interrupted_ensemble(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -98,8 +102,9 @@ class EnsembleTests(unittest.TestCase):
             with patch.object(experiment, "run_afem", side_effect=fail_second):
                 with self.assertRaisesRegex(RuntimeError, "Simulated interruption"):
                     experiment.run_ensemble(cfg, manufactured_sine_2d, num_runs=2, save_final_meshes=True)
-            pngs = list((out / "run_001").rglob("*.png"))
-            self.assertEqual([p.name for p in pngs], ["final_mesh.png"])
+            pdfs = list((out / "run_001").rglob("*.pdf"))
+            self.assertEqual([p.name for p in pdfs], ["final_mesh.pdf"])
+            self.assertEqual(list(out.rglob("*.png")), [])
             experiment.plot_saved_ensemble(out)
             stats = json.loads((out / "ensemble_statistics.json").read_text())
             self.assertEqual(stats["nruns"], 1)

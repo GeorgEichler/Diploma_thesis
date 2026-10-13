@@ -32,6 +32,79 @@ python -m experiments.run_square_quadrature
 
 Run these commands from the project root.
 
+## Figures for papers
+
+All plotting functions save only a vector PDF by default.
+`AFEMConfig` controls both formats independently: `save_pdf=True` and
+`save_png=False`. Disabling both saves no plot files.
+Optional PNG exports use 600 dpi. PDF exports embed TrueType fonts and preserve
+vector curves and text; their quality does not depend on the PNG pixel count.
+Export defaults live in `afem/utils/figure_export.py`.
+
+Figures are designed at their printed size: each panel is 6.5 cm wide
+and 6.5 cm high, fitting two panels within a 13.7 cm text width. Shared
+settings in `afem/utils/publication_style.py` use Computer Modern serif
+text and mathematics, 10 pt axis labels, 8.5 pt ticks, thin curves, inward
+ticks on all four sides, and a pale background without grid lines.
+This follows the visual style of Figures 1 and 2 of Storn's
+*Randomized Projection Operators onto Piecewise Polynomial Spaces*.
+The fonts ship with Matplotlib; plotting does not require a LaTeX installation.
+Adjust `PANEL_WIDTH_CM`, `PANEL_HEIGHT_CM`, and `PAPER_RC` there for another
+manuscript layout. Settings apply locally and do not change the caller's style.
+
+Use the PDF files in LaTeX, for example with `\usepackage{graphicx}`:
+
+```latex
+\includegraphics[width=6.5cm]{results/mc_sample_comparison/sample_errors.pdf}
+\hfill
+\includegraphics[width=6.5cm]{results/mc_ensemble/ensemble_errors.pdf}
+```
+
+Both Monte Carlo comparison types keep identical canvas dimensions and
+data axes. The sample color key sits below the axes; the ensemble uses
+that space for its individual-run and spread legend. Exports retain the
+full canvas so placing them at equal widths preserves alignment. Include
+them at 6.5 cm to preserve the designed font sizes. Enlarging or shrinking
+the PDF scales its text and line widths too.
+`results/paper_figures/comparison_preview.tex` demonstrates both pairs
+inside a document with a 13.7 cm text width.
+To regenerate the comparison figures from existing results without solving:
+
+```bash
+python -m experiments.run_mc_sample_comparison --plot-only
+python -m experiments.run_mc_ensemble --plot-only
+```
+
+To also generate PNG copies, add `--png` to any comparison command,
+including when using `--plot-only`:
+
+```bash
+python -m experiments.run_mc_sample_comparison --plot-only --png
+python -m experiments.run_mc_ensemble --plot-only --png
+python -m experiments.run_load_comparison --plot-only --png
+python -m experiments.run_refinement_comparison --plot-only --png
+```
+
+For other experiments, set `save_png=True` in their `AFEMConfig` to apply
+the option to mesh, solution, error-history, and estimator plots. Direct
+plotting calls accept both format switches:
+
+```python
+plot_history(history, "estimator.pdf", save_png=True)
+plot_history(history, "estimator.pdf", save_pdf=False, save_png=True)  # PNG only
+```
+
+Comparison commands also accept `--pdf` / `--no-pdf` and `--png` / `--no-png`:
+
+```bash
+python -m experiments.run_mc_ensemble --plot-only --no-pdf --png
+```
+
+Plotting functions return PDF paths when PDF is enabled, otherwise PNG
+paths when PNG is enabled. With both disabled, a single-plot function
+returns `None` and a multi-plot function returns an empty tuple. Previously
+saved files are retained when disabling a format.
+
 ## Uniform refinement
 
 Edit `RHS` and `CONFIG` in `experiments/run_uniform.py`, then run:
@@ -78,14 +151,14 @@ samples per element at every level. Runs execute in array order and save before
 the next starts. All use the same RHS, initial mesh, refinement settings, and
 reference settings. `CONFIG.refinement_strategy="uniform"` is also supported.
 
-The study creates two PNGs in `results/mc_sample_comparison`: `sample_errors.png`
-and `sample_estimator.png`. Both use progressively darker shades of seaborn's
+The study creates PDFs in `results/mc_sample_comparison`: `sample_errors`
+and `sample_estimator`. Both use progressively darker shades of seaborn's
 `crest` colormap for larger sample
 counts, identified by a continuous logarithmic colorbar with ticks at the actual
 sample counts (up to eight labels). The error plot has solid H1 and dashed
 L2 curves and a "relative error" axis. Values remain relative H1 seminorm and L2
 errors, despite the shortened H1 label. Curves are plotted at each run's own DOFs;
-they are not averaged or interpolated. No titles, PDFs, solution-field images,
+they are not averaged or interpolated. No titles, solution-field images,
 mesh images, or per-run convergence plots are generated.
 
 `samples_<count>/history.json` saves configuration, reference data, and history;
@@ -116,8 +189,8 @@ next. `ensemble.json` records the base seed and completed runs. Seeds follow
 `base_seed + run_index * max_iterations + level`, avoiding reused seeds across
 different runs and levels. The ensemble is reproducible for the same settings.
 
-Two separate PNGs are saved: `ensemble_errors.png` (with the axis labelled
-"relative error") and `ensemble_estimator.png`. Options can be set in the file
+Two PDFs are saved: `ensemble_errors` (with the axis labelled
+"relative error") and `ensemble_estimator`. Options can be set in the file
 or on the command line:
 
 - `--summary median`, `mean`, or `none` selects the central curve.
@@ -165,7 +238,7 @@ mesh and use the same load, sampling, and quadrature settings.
 AFEM finishes and saves before uniform refinement starts. Results are stored
 under `CONFIG.output_dir/<method>/adaptive/` and `uniform/`, including histories,
 reference data, final meshes and solutions. The combined
-`<method>/refinement_errors_comparison.png` uses a color for each strategy,
+`<method>/refinement_errors_comparison.pdf` uses a color for each strategy,
 solid H1 and dashed L2 curves against DOFs. These are relative H1 seminorm and
 L2 errors despite the shortened labels. Each strategy uses its own enriched
 final-mesh reference, not a common reference solution.
@@ -198,7 +271,7 @@ history (`history.json`), final mesh and solution (`final_solution.npz`, arrays
 `p`, `t`, `u`), RHS identity (`experiment.json`), and plots in its own subdirectory
 of `results/load_comparison` before the next method starts.
 
-The combined `relative_errors_comparison.png` uses one color per
+The combined `relative_errors_comparison.pdf` uses one color per
 method, solid lines for relative H1 seminorm error, and dashed lines for relative
 L2 error, plotted against DOFs. Each method uses its own enriched final-mesh
 reference solution; these are not a shared exact reference. The requested

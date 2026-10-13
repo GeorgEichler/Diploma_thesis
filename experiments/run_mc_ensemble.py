@@ -45,7 +45,8 @@ def _write_json(path, data):
     temporary.replace(path)
 
 
-def plot_saved_ensemble(output_dir, *, summary="median", show_individual=True, show_band=True):
+def plot_saved_ensemble(output_dir, *, summary="median", show_individual=True, show_band=True,
+                        save_pdf=True, save_png=False):
     """Use only completed runs listed in this ensemble's manifest, not stale folders."""
     output_dir = Path(output_dir)
     manifest = json.loads((output_dir / "ensemble.json").read_text(encoding="utf-8"))
@@ -55,7 +56,8 @@ def plot_saved_ensemble(output_dir, *, summary="median", show_individual=True, s
         raise ValueError("No completed runs available to plot")
     stats = aggregate_histories(histories)
     paths = plot_ensemble(histories, stats, output_dir, summary=summary,
-                          show_individual=show_individual, show_band=show_band)
+                          show_individual=show_individual, show_band=show_band,
+                          save_pdf=save_pdf, save_png=save_png)
     _write_json(output_dir / "ensemble_statistics.json", stats)
     return paths
 
@@ -96,10 +98,11 @@ def run_ensemble(config, rhs, *, num_runs, save_final_meshes=False,
         manifest["completed_runs"].append({"directory": directory, "seed": seed})
         _write_json(out / "ensemble.json", manifest)
         if save_final_meshes:
-            plot_mesh(mesh, cfg.output_dir / "plots" / "final_mesh.png")
+            plot_mesh(mesh, cfg.output_dir / "plots" / "final_mesh.pdf", save_pdf=config.save_pdf, save_png=config.save_png)
         print(f"Saved {directory}", flush=True)
         del mesh, u
-    paths = plot_saved_ensemble(out, summary=summary, show_individual=show_individual, show_band=show_band)
+    paths = plot_saved_ensemble(out, summary=summary, show_individual=show_individual,
+                               show_band=show_band, save_pdf=config.save_pdf, save_png=config.save_png)
     for path in paths:
         print(f"Saved ensemble plot to {path}", flush=True)
     return paths
@@ -113,10 +116,16 @@ if __name__ == "__main__":
     parser.add_argument("--show-band", action=argparse.BooleanOptionalAction, default=SHOW_BAND)
     parser.add_argument("--save-final-meshes", action=argparse.BooleanOptionalAction, default=SAVE_FINAL_MESHES)
     parser.add_argument("--plot-only", action="store_true")
+    parser.add_argument("--png", action=argparse.BooleanOptionalAction, default=CONFIG.save_png,
+                        help="Save 600 dpi PNG images (disabled by default).")
+    parser.add_argument("--pdf", action=argparse.BooleanOptionalAction, default=CONFIG.save_pdf,
+                        help="Save vector PDFs (enabled by default).")
     args = parser.parse_args()
     options = dict(summary=args.summary, show_individual=args.show_individual, show_band=args.show_band)  # noqa: C408
     if args.plot_only:
-        for path in plot_saved_ensemble(CONFIG.output_dir, **options):
+        for path in plot_saved_ensemble(CONFIG.output_dir, save_pdf=args.pdf,
+                                        save_png=args.png, **options):
             print(path)
     else:
-        run_ensemble(CONFIG, RHS, num_runs=args.runs, save_final_meshes=args.save_final_meshes, **options)
+        run_ensemble(replace(CONFIG, save_pdf=args.pdf, save_png=args.png), RHS, num_runs=args.runs,
+                     save_final_meshes=args.save_final_meshes, **options)

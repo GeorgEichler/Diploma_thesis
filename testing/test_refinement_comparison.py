@@ -21,6 +21,9 @@ class RefinementComparisonTests(unittest.TestCase):
     def test_all_methods_sequential_saves_and_plot_only(self):
         with ExitStack() as resources:
             root = Path(resources.enter_context(tempfile.TemporaryDirectory()))
+            # Tiny test meshes do not reach the experiment's paper-scale slope anchors.
+            resources.enter_context(patch.object(experiment, "REFERENCE_RATES", ()))
+            resources.enter_context(patch.object(experiment, "REFERENCE_STARTS", None))
             for name in ("plot_history", "plot_reference_error_history"):
                 resources.enter_context(patch(f"afem.core.afem.{name}"))
             cfg = replace(
@@ -39,13 +42,14 @@ class RefinementComparisonTests(unittest.TestCase):
                         return original_uniform(config, rhs)
 
                     with patch.object(experiment, "run_ufem", side_effect=checked_uniform) as uniform:
-                        png = experiment.run_comparison(
+                        pdf = experiment.run_comparison(
                             cfg, manufactured_sine_2d, method=method, uniform_iterations=3,
                         )
                         self.assertEqual(uniform.call_count, 1)
 
-                    self.assertTrue(png.is_file())
-                    self.assertFalse(png.with_suffix(".pdf").exists())
+                    self.assertTrue(pdf.is_file())
+                    self.assertEqual(pdf.suffix, ".pdf")
+                    self.assertEqual(list((root / method).rglob("*.png")), [])
                     for strategy, levels in (("adaptive", 2), ("uniform", 3)):
                         folder = root / method / strategy
                         data = json.loads((folder / "history.json").read_text())
@@ -77,6 +81,8 @@ class RefinementComparisonTests(unittest.TestCase):
                             np.testing.assert_allclose(solid.get_ydata(), [h["relative_h1_semi_error_ref"] for h in data["history"]])
                             np.testing.assert_allclose(dashed.get_ydata(), [h["relative_l2_error_ref"] for h in data["history"]])
                     plt.close("all")
+                    experiment.plot_saved_comparison(root, method, save_png=True)
+                    self.assertTrue(pdf.with_suffix(".png").is_file())
 
     def test_invalid_choices_fail_before_solving(self):
         with patch.object(experiment, "run_afem") as solve:

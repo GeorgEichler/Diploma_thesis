@@ -34,5 +34,5 @@ if __name__ == "__main__":
     u_exact = u(mesh.p)
     out = Path(cfg.output_dir)
     plots = out / "plots"
-    plot_solution_2d(mesh, u_exact, plots / "exact_solution.png")
+    plot_solution_2d(mesh, u_exact, plots / "exact_solution.pdf", save_pdf=cfg.save_pdf, save_png=cfg.save_png)
     print(r"Energy of exact solution is J(u)= - pi^2/4 =" , -np.pi/4)
