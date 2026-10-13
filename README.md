@@ -40,6 +40,9 @@ All plotting functions save only a vector PDF by default.
 Optional PNG exports use 600 dpi. PDF exports embed TrueType fonts and preserve
 vector curves and text; their quality does not depend on the PNG pixel count.
 Export defaults live in `afem/utils/figure_export.py`.
+The exporter suppresses the known FontTools `created`/`modified` timestamp
+messages from Computer Modern font metadata while saving. Other font
+warnings remain visible, and logging outside export is unchanged.
 
 Figures are designed at their printed size: each panel is 6.5 cm wide
 and 6.5 cm high, fitting two panels within a 13.7 cm text width. Shared

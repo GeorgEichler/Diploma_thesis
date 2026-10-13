@@ -1,7 +1,7 @@
 {
   "config": {
     "domain": "lshape",
-    "dim": 3,
+    "dim": 2,
     "initial_refinements": 3,
     "max_iterations": 9,
     "theta": 0.5,
@@ -21,7 +21,9 @@
     "reference_quadrature_order": 19,
     "estimator_quadrature_order": 10,
     "refinement_strategy": "adaptive",
-    "save_history_plots": true
+    "save_history_plots": true,
+    "save_pdf": true,
+    "save_png": false
   },
   "reference": {
     "reference_error_method": "direct",
