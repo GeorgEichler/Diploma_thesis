@@ -27,24 +27,27 @@ from afem.utils.plotting import plot_reference_error_comparison
 RHS = low_oscillation
 CONFIG = AFEMConfig(
     domain="lshape",
+    initial_mesh="lshape_four_triangles",
     dim=2,
-    initial_refinements=3,
-    max_iterations=8,  # Monte Carlo and standard quadrature
+    initial_refinements=1,
+    max_iterations=11,  # Default unless overridden below
     theta=0.5,
     mc_samples_per_element=20,
     mc_seed=123,
-    quadrature_order=10,  # 10 is the default value for the quadrature
-    estimator_quadrature_order=10,  # integrate f**2; ignored for midpoint/MC
+    quadrature_order=2,  # 10 is the default value for the quadrature, use 2 for low quadrature
+    estimator_quadrature_order=2,  # integrate f**2; ignored for midpoint/MC, chose 2 for low quadrature
     compute_reference_error=True,
     reference_quadrature_order=19, # 10 is the default value for the quadrature
     reference_error_method="direct",
     save_plots=True,
-    plot_every=3,
+    plot_every=2,
     output_dir=Path("results/load_comparison_low_quadrature_low_oscillation"),
 )
 
 # Use more adaptive levels for midpoint; None uses CONFIG.max_iterations.
-MIDPOINT_ITERATIONS = 8
+MIDPOINT_ITERATIONS = 12
+# Optional standard quadrature limit; None uses CONFIG.max_iterations.
+QUADRATURE_ITERATIONS: int | None = None
 # Add optional convergence guides, e.g. (1.0 / 2.0,); empty means none.
 REFERENCE_RATES: tuple[float, ...] = ()
 # Optionally provide one (ndof, error) start point for each rate.
@@ -76,24 +79,34 @@ def plot_saved_comparison(output_dir: Path, *, save_pdf=True, save_png=False):
         raise FileNotFoundError(f"No method histories found in {output_dir}")
     plot_path = output_dir / "relative_errors_comparison.pdf"
     return plot_reference_error_comparison(
-        runs, plot_path, reference_rates=REFERENCE_RATES,
+        runs, plot_path, reference_rates=REFERENCE_RATES, title="",
         reference_starts=REFERENCE_STARTS, save_pdf=save_pdf, save_png=save_png,
     )
 
 
-def run_comparison(config: AFEMConfig, rhs, *, midpoint_iterations: int | None = None):
-    """Persist each method in sequence, optionally running midpoint longer."""
+def run_comparison(
+    config: AFEMConfig, rhs, *, midpoint_iterations: int | None = None,
+    quadrature_iterations: int | None = None,
+):
+    """Persist each method in sequence with optional per-method iteration limits."""
     if midpoint_iterations is not None and midpoint_iterations < 1:
         raise ValueError("midpoint_iterations must be at least 1")
+    if quadrature_iterations is not None and quadrature_iterations < 1:
+        raise ValueError("quadrature_iterations must be at least 1")
+    iteration_overrides = {
+        "midpoint": midpoint_iterations,
+        "quadrature": quadrature_iterations,
+    }
     output_dir = Path(config.output_dir)
     for name, load_method, quadrature_rule, _, _, _ in METHODS:
+        iterations = iteration_overrides.get(name)
         method_config = replace(
             config,
             load_method=load_method,
             quadrature_rule=quadrature_rule,
             max_iterations=(
-                midpoint_iterations
-                if name == "midpoint" and midpoint_iterations is not None
+                iterations
+                if iterations is not None
                 else config.max_iterations
             ),
             compute_reference_error=True,
@@ -140,4 +153,5 @@ if __name__ == "__main__":
             print(path)
     else:
         run_comparison(replace(CONFIG, save_pdf=args.pdf, save_png=args.png), RHS,
-                       midpoint_iterations=MIDPOINT_ITERATIONS)
+                       midpoint_iterations=MIDPOINT_ITERATIONS,
+                       quadrature_iterations=QUADRATURE_ITERATIONS)
