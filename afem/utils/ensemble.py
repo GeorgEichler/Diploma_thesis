@@ -11,10 +11,9 @@ from afem.utils.comparison_layout import comparison_figure
 from afem.utils.figure_export import save_figure
 from afem.utils.publication_style import paper_style
 
-
 METRICS = (
-    ("relative_h1_semi_error_ref", r"$H^1$ seminorm", "#0072B2", "-", 0),
-    ("relative_l2_error_ref", r"$L^2$ norm", "#D55E00", "--", 0),
+    ("relative_h1_semi_error_ref", r"$H^1$", "#0072B2", "-", 0),
+    ("relative_l2_error_ref", r"$L^2$", "#D55E00", "--", 0),
     ("estimator", r"Residual $\eta$", "#009E73", "-", 1),
 )
 

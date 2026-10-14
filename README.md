@@ -34,6 +34,31 @@ Run these commands from the project root.
 
 ## Figures for papers
 
+Mesh figures use separate settings in `afem/utils/publication_style.py`:
+`MESH_PANEL_WIDTH_CM=3.2`, `MESH_PANEL_HEIGHT_CM=3.2`, and
+`MESH_LINEWIDTH=0.15` pt. They have no axes, tick labels, or titles and
+use a small margin, allowing four panels per row within a 13.7 cm text
+width. Put refinement levels and element counts in LaTeX subcaptions
+and include each mesh PDF with `width=3.2cm`.
+
+Existing vector mesh PDFs can be reformatted without rerunning the
+simulations. The optional utility requires PyMuPDF (`pip install pymupdf`):
+
+```bash
+python -m experiments.reformat_mesh_pdfs results/my_study
+```
+
+It rewrites only `mesh_l*.pdf` files, using their saved vector mesh
+edges. Add `--png` to regenerate PNG copies as well. Numerical results
+and other figures are preserved. The following comparison and error
+figure settings retain their separate 6.5 cm panel size.
+
+The refinement comparison uses matching `PLOT_XLIM` and `PLOT_YLIM`
+settings in `experiments/run_refinement_comparison.py` for panels shown
+side by side. The current ranges are 10 to 100,000 DOFs and relative
+errors from 0.0001 to 1. Set either value to `None` for automatic scaling,
+or adjust it to include the error range of another study.
+
 All plotting functions save only a vector PDF by default.
 `AFEMConfig` controls both formats independently: `save_pdf=True` and
 `save_png=False`. Disabling both saves no plot files.
@@ -107,6 +132,26 @@ Plotting functions return PDF paths when PDF is enabled, otherwise PNG
 paths when PNG is enabled. With both disabled, a single-plot function
 returns `None` and a multi-plot function returns an empty tuple. Previously
 saved files are retained when disabling a format.
+
+## Initial meshes
+
+`AFEMConfig.initial_mesh="default"` uses the existing scikit-fem mesh for
+the selected domain. For an L-shaped domain, choose:
+
+```python
+domain="lshape",
+initial_mesh="lshape_four_triangles",
+initial_refinements=0,
+```
+
+This base mesh consists of the three unit squares `[-1,0]^2`,
+`[-1,0] x [0,1]`, and `[0,1] x [-1,0]`. Each square's centre connects
+to its four corners, giving 12 triangles and 11 vertices in total.
+Shared square edges match, so the mesh is conforming.
+`initial_refinements` is applied afterwards: values 0, 1, and 2 give
+12, 48, and 192 triangles respectively before the first solve.
+This option works for both adaptive and uniform runs and is recorded
+in `history.json`. It requires `domain="lshape"`.
 
 ## Uniform refinement
 
@@ -254,6 +299,17 @@ python -m experiments.run_refinement_comparison --method quadrature --plot-only
 
 Different methods use separate folders; rerunning the same method overwrites
 its results. Choose another `CONFIG.output_dir` to retain earlier runs.
+
+Generate a 3D surface from a saved final P1 solution without solving again:
+
+```bash
+python -m experiments.plot_saved_solution results/refinement_comparison_Monte_Carlo_lshape_one_initial_refinement/monte_carlo/adaptive/final_solution.npz
+```
+
+This saves `adaptive/plots/final_solution_3d.pdf` as a vector figure using the
+saved mesh connectivity, preserving the L-shaped domain. Add `--png` for a
+600 dpi PNG, `--no-pdf` to disable PDF export, or `--output` to choose another
+filename. `--elev` and `--azim` set the camera angles in degrees.
 
 ## Compare load methods with the same refinement strategy
 

@@ -10,6 +10,13 @@ PANEL_WIDTH_CM = 6.5
 PANEL_HEIGHT_CM = 6.5
 PANEL_FIGSIZE = (PANEL_WIDTH_CM / 2.54, PANEL_HEIGHT_CM / 2.54)
 
+# Four mesh panels fit across a 13.7 cm text width, with space between panels.
+MESH_PANEL_WIDTH_CM = 3.2
+MESH_PANEL_HEIGHT_CM = 3.2
+MESH_FIGSIZE = (MESH_PANEL_WIDTH_CM / 2.54, MESH_PANEL_HEIGHT_CM / 2.54)
+MESH_AXES_RECT = (0.02, 0.02, 0.96, 0.96)
+MESH_LINEWIDTH = 0.15
+
 PAPER_RC = {
     "font.family": "serif",
     "font.serif": ["cmr10", "DejaVu Serif"],

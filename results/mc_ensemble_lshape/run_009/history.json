@@ -1,0 +1,147 @@
+{
+  "config": {
+    "domain": "lshape",
+    "dim": 2,
+    "initial_refinements": 1,
+    "max_iterations": 12,
+    "theta": 0.5,
+    "load_method": "monte_carlo",
+    "quadrature_rule": "default",
+    "quadrature_order": null,
+    "mc_samples_per_element": 20,
+    "mc_seed": 138,
+    "save_plots": false,
+    "plot_every": 5,
+    "output_dir": "results\\mc_ensemble_lshape\\run_009",
+    "solver": "direct",
+    "compute_energy": false,
+    "compute_reference_error": true,
+    "reference_error_method": "direct",
+    "reference_order": 3,
+    "reference_quadrature_order": 19,
+    "estimator_quadrature_order": null,
+    "refinement_strategy": "adaptive",
+    "save_history_plots": false,
+    "save_pdf": true,
+    "save_png": false,
+    "initial_mesh": "lshape_four_triangles"
+  },
+  "reference": {
+    "reference_error_method": "direct",
+    "reference_order": 3,
+    "reference_ndofs": 202729,
+    "reference_quadrature_order": 19,
+    "reference_l2_norm": 0.41339253536455506,
+    "reference_h1_semi_norm": 1.3079094097307593
+  },
+  "history": [
+    {
+      "level": 0,
+      "ndofs": 33,
+      "nelems": 48,
+      "estimator": 2.8539489431497125,
+      "nmarked": 13,
+      "relative_l2_error_ref": 0.22381728824236824,
+      "relative_h1_semi_error_ref": 0.444070340018158
+    },
+    {
+      "level": 1,
+      "ndofs": 64,
+      "nelems": 106,
+      "estimator": 1.941423283533924,
+      "nmarked": 23,
+      "relative_l2_error_ref": 0.10703914586789583,
+      "relative_h1_semi_error_ref": 0.3048920851532909
+    },
+    {
+      "level": 2,
+      "ndofs": 120,
+      "nelems": 207,
+      "estimator": 1.442548780669264,
+      "nmarked": 47,
+      "relative_l2_error_ref": 0.06207526107582155,
+      "relative_h1_semi_error_ref": 0.22671310334817837
+    },
+    {
+      "level": 3,
+      "ndofs": 225,
+      "nelems": 406,
+      "estimator": 1.0562551545845036,
+      "nmarked": 77,
+      "relative_l2_error_ref": 0.03292964557892713,
+      "relative_h1_semi_error_ref": 0.16120503763424143
+    },
+    {
+      "level": 4,
+      "ndofs": 394,
+      "nelems": 728,
+      "estimator": 0.785473480238545,
+      "nmarked": 187,
+      "relative_l2_error_ref": 0.01689186484483053,
+      "relative_h1_semi_error_ref": 0.1188213009792916
+    },
+    {
+      "level": 5,
+      "ndofs": 770,
+      "nelems": 1462,
+      "estimator": 0.5704883626337743,
+      "nmarked": 269,
+      "relative_l2_error_ref": 0.009124307552806495,
+      "relative_h1_semi_error_ref": 0.08424431722085704
+    },
+    {
+      "level": 6,
+      "ndofs": 1325,
+      "nelems": 2536,
+      "estimator": 0.4256796539711551,
+      "nmarked": 658,
+      "relative_l2_error_ref": 0.0045268458642338544,
+      "relative_h1_semi_error_ref": 0.061909596122974635
+    },
+    {
+      "level": 7,
+      "ndofs": 2623,
+      "nelems": 5093,
+      "estimator": 0.3109402633314222,
+      "nmarked": 880,
+      "relative_l2_error_ref": 0.0026420489337920746,
+      "relative_h1_semi_error_ref": 0.04458912890438072
+    },
+    {
+      "level": 8,
+      "ndofs": 4260,
+      "nelems": 8318,
+      "estimator": 0.23520940970654772,
+      "nmarked": 2017,
+      "relative_l2_error_ref": 0.001487136784033851,
+      "relative_h1_semi_error_ref": 0.034267507347382
+    },
+    {
+      "level": 9,
+      "ndofs": 8007,
+      "nelems": 15750,
+      "estimator": 0.17751684718187907,
+      "nmarked": 3121,
+      "relative_l2_error_ref": 0.0008328994083272839,
+      "relative_h1_semi_error_ref": 0.025592126820050645
+    },
+    {
+      "level": 10,
+      "ndofs": 13529,
+      "nelems": 26694,
+      "estimator": 0.13461416955592617,
+      "nmarked": 5137,
+      "relative_l2_error_ref": 0.000472762121952082,
+      "relative_h1_semi_error_ref": 0.019562390909790322
+    },
+    {
+      "level": 11,
+      "ndofs": 22678,
+      "nelems": 44899,
+      "estimator": 0.10291167712729044,
+      "nmarked": 10866,
+      "relative_l2_error_ref": 0.00028173700585629684,
+      "relative_h1_semi_error_ref": 0.01497294514448722
+    }
+  ]
+}

@@ -44,7 +44,7 @@ class EnsembleTests(unittest.TestCase):
     def test_runs_saved_sequentially_without_images_and_replot(self):
         with tempfile.TemporaryDirectory() as tmp:
             out = Path(tmp)
-            cfg = replace(experiment.CONFIG, domain="unit_square", initial_refinements=1,
+            cfg = replace(experiment.CONFIG, domain="unit_square", initial_mesh="default", initial_refinements=1,
                           max_iterations=2, reference_quadrature_order=10, output_dir=out)
             original = experiment.run_afem
             calls = []
@@ -90,7 +90,7 @@ class EnsembleTests(unittest.TestCase):
     def test_optional_final_mesh_and_interrupted_ensemble(self):
         with tempfile.TemporaryDirectory() as tmp:
             out = Path(tmp)
-            cfg = replace(experiment.CONFIG, domain="unit_square", initial_refinements=1,
+            cfg = replace(experiment.CONFIG, domain="unit_square", initial_mesh="default", initial_refinements=1,
                           max_iterations=1, reference_quadrature_order=10, output_dir=out)
             original = experiment.run_afem
 

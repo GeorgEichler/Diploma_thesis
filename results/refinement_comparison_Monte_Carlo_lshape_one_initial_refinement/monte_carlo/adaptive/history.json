@@ -1,0 +1,156 @@
+{
+  "config": {
+    "domain": "lshape",
+    "dim": 2,
+    "initial_refinements": 1,
+    "max_iterations": 13,
+    "theta": 0.5,
+    "load_method": "monte_carlo",
+    "quadrature_rule": "default",
+    "quadrature_order": 2,
+    "mc_samples_per_element": 20,
+    "mc_seed": 123,
+    "save_plots": true,
+    "plot_every": 1,
+    "output_dir": "results\\refinement_comparison_Monte_Carlo_lshape_one_initial_refinement\\monte_carlo\\adaptive",
+    "solver": "direct",
+    "compute_energy": false,
+    "compute_reference_error": true,
+    "reference_error_method": "direct",
+    "reference_order": 3,
+    "reference_quadrature_order": 19,
+    "estimator_quadrature_order": 10,
+    "refinement_strategy": "adaptive",
+    "save_history_plots": true,
+    "save_pdf": true,
+    "save_png": false,
+    "initial_mesh": "lshape_four_triangles"
+  },
+  "reference": {
+    "reference_error_method": "direct",
+    "reference_order": 3,
+    "reference_ndofs": 369871,
+    "reference_quadrature_order": 19,
+    "reference_l2_norm": 0.4133925843733597,
+    "reference_h1_semi_norm": 1.3079094761294277
+  },
+  "history": [
+    {
+      "level": 0,
+      "ndofs": 33,
+      "nelems": 48,
+      "estimator": 2.8550140914515256,
+      "nmarked": 13,
+      "relative_l2_error_ref": 0.22421126359958846,
+      "relative_h1_semi_error_ref": 0.44409495533364324
+    },
+    {
+      "level": 1,
+      "ndofs": 64,
+      "nelems": 106,
+      "estimator": 1.922425687374016,
+      "nmarked": 23,
+      "relative_l2_error_ref": 0.11011471646635429,
+      "relative_h1_semi_error_ref": 0.30508586909967134
+    },
+    {
+      "level": 2,
+      "ndofs": 120,
+      "nelems": 207,
+      "estimator": 1.4480474153100682,
+      "nmarked": 47,
+      "relative_l2_error_ref": 0.05817108204107494,
+      "relative_h1_semi_error_ref": 0.22660412555900733
+    },
+    {
+      "level": 3,
+      "ndofs": 223,
+      "nelems": 402,
+      "estimator": 1.060599008292823,
+      "nmarked": 77,
+      "relative_l2_error_ref": 0.03393920092759602,
+      "relative_h1_semi_error_ref": 0.16180551158917536
+    },
+    {
+      "level": 4,
+      "ndofs": 393,
+      "nelems": 726,
+      "estimator": 0.7872574937844738,
+      "nmarked": 187,
+      "relative_l2_error_ref": 0.01759139696779512,
+      "relative_h1_semi_error_ref": 0.1191274394620633
+    },
+    {
+      "level": 5,
+      "ndofs": 764,
+      "nelems": 1450,
+      "estimator": 0.5740943524204879,
+      "nmarked": 272,
+      "relative_l2_error_ref": 0.009192918024402523,
+      "relative_h1_semi_error_ref": 0.08509467320503704
+    },
+    {
+      "level": 6,
+      "ndofs": 1327,
+      "nelems": 2540,
+      "estimator": 0.4274797272605336,
+      "nmarked": 644,
+      "relative_l2_error_ref": 0.00461031401894958,
+      "relative_h1_semi_error_ref": 0.062107576772469614
+    },
+    {
+      "level": 7,
+      "ndofs": 2604,
+      "nelems": 5056,
+      "estimator": 0.311797987232749,
+      "nmarked": 900,
+      "relative_l2_error_ref": 0.002596292397611382,
+      "relative_h1_semi_error_ref": 0.04479448614474737
+    },
+    {
+      "level": 8,
+      "ndofs": 4283,
+      "nelems": 8363,
+      "estimator": 0.23528351471991138,
+      "nmarked": 1992,
+      "relative_l2_error_ref": 0.0014162267279824985,
+      "relative_h1_semi_error_ref": 0.03422728371188635
+    },
+    {
+      "level": 9,
+      "ndofs": 7988,
+      "nelems": 15712,
+      "estimator": 0.1775172531392362,
+      "nmarked": 3139,
+      "relative_l2_error_ref": 0.0008392204019595912,
+      "relative_h1_semi_error_ref": 0.025698486931375768
+    },
+    {
+      "level": 10,
+      "ndofs": 13546,
+      "nelems": 26722,
+      "estimator": 0.13480833244662752,
+      "nmarked": 5189,
+      "relative_l2_error_ref": 0.0004799341481309914,
+      "relative_h1_semi_error_ref": 0.019543392346589243
+    },
+    {
+      "level": 11,
+      "ndofs": 22818,
+      "nelems": 45173,
+      "estimator": 0.10288523890560645,
+      "nmarked": 10754,
+      "relative_l2_error_ref": 0.00027470803686351395,
+      "relative_h1_semi_error_ref": 0.01496750886173714
+    },
+    {
+      "level": 12,
+      "ndofs": 41308,
+      "nelems": 81983,
+      "estimator": 0.0785278655111523,
+      "nmarked": 14221,
+      "relative_l2_error_ref": 0.00015994211752541165,
+      "relative_h1_semi_error_ref": 0.011088539799583784
+    }
+  ]
+}

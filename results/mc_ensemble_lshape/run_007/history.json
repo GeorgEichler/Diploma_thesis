@@ -1,0 +1,147 @@
+{
+  "config": {
+    "domain": "lshape",
+    "dim": 2,
+    "initial_refinements": 1,
+    "max_iterations": 12,
+    "theta": 0.5,
+    "load_method": "monte_carlo",
+    "quadrature_rule": "default",
+    "quadrature_order": null,
+    "mc_samples_per_element": 20,
+    "mc_seed": 114,
+    "save_plots": false,
+    "plot_every": 5,
+    "output_dir": "results\\mc_ensemble_lshape\\run_007",
+    "solver": "direct",
+    "compute_energy": false,
+    "compute_reference_error": true,
+    "reference_error_method": "direct",
+    "reference_order": 3,
+    "reference_quadrature_order": 19,
+    "estimator_quadrature_order": null,
+    "refinement_strategy": "adaptive",
+    "save_history_plots": false,
+    "save_pdf": true,
+    "save_png": false,
+    "initial_mesh": "lshape_four_triangles"
+  },
+  "reference": {
+    "reference_error_method": "direct",
+    "reference_order": 3,
+    "reference_ndofs": 201259,
+    "reference_quadrature_order": 19,
+    "reference_l2_norm": 0.4133925353641506,
+    "reference_h1_semi_norm": 1.3079094097301336
+  },
+  "history": [
+    {
+      "level": 0,
+      "ndofs": 33,
+      "nelems": 48,
+      "estimator": 2.8543039319680856,
+      "nmarked": 13,
+      "relative_l2_error_ref": 0.22505596256078667,
+      "relative_h1_semi_error_ref": 0.44424997716978143
+    },
+    {
+      "level": 1,
+      "ndofs": 64,
+      "nelems": 106,
+      "estimator": 1.932867795889274,
+      "nmarked": 23,
+      "relative_l2_error_ref": 0.10837196766625098,
+      "relative_h1_semi_error_ref": 0.3049528800862478
+    },
+    {
+      "level": 2,
+      "ndofs": 120,
+      "nelems": 207,
+      "estimator": 1.4448708375731618,
+      "nmarked": 47,
+      "relative_l2_error_ref": 0.060776452784190936,
+      "relative_h1_semi_error_ref": 0.22668861612425822
+    },
+    {
+      "level": 3,
+      "ndofs": 223,
+      "nelems": 402,
+      "estimator": 1.059282502036297,
+      "nmarked": 77,
+      "relative_l2_error_ref": 0.03412855927606925,
+      "relative_h1_semi_error_ref": 0.16182851047927152
+    },
+    {
+      "level": 4,
+      "ndofs": 392,
+      "nelems": 724,
+      "estimator": 0.7881292456725872,
+      "nmarked": 187,
+      "relative_l2_error_ref": 0.017086157360970997,
+      "relative_h1_semi_error_ref": 0.11921581200533693
+    },
+    {
+      "level": 5,
+      "ndofs": 766,
+      "nelems": 1454,
+      "estimator": 0.5742960721881247,
+      "nmarked": 266,
+      "relative_l2_error_ref": 0.009398009526035006,
+      "relative_h1_semi_error_ref": 0.08484946992139528
+    },
+    {
+      "level": 6,
+      "ndofs": 1313,
+      "nelems": 2513,
+      "estimator": 0.4288812365634985,
+      "nmarked": 643,
+      "relative_l2_error_ref": 0.004706718563993203,
+      "relative_h1_semi_error_ref": 0.062433417528074575
+    },
+    {
+      "level": 7,
+      "ndofs": 2575,
+      "nelems": 5001,
+      "estimator": 0.3139320660301332,
+      "nmarked": 888,
+      "relative_l2_error_ref": 0.0026673502176683237,
+      "relative_h1_semi_error_ref": 0.0449850195464624
+    },
+    {
+      "level": 8,
+      "ndofs": 4232,
+      "nelems": 8260,
+      "estimator": 0.23661076591488742,
+      "nmarked": 1957,
+      "relative_l2_error_ref": 0.0014731996529909418,
+      "relative_h1_semi_error_ref": 0.03446602879941121
+    },
+    {
+      "level": 9,
+      "ndofs": 7863,
+      "nelems": 15457,
+      "estimator": 0.17880230832818408,
+      "nmarked": 3139,
+      "relative_l2_error_ref": 0.0008550673687208129,
+      "relative_h1_semi_error_ref": 0.025826500406982145
+    },
+    {
+      "level": 10,
+      "ndofs": 13415,
+      "nelems": 26464,
+      "estimator": 0.13560434020216028,
+      "nmarked": 5064,
+      "relative_l2_error_ref": 0.0005081461247827024,
+      "relative_h1_semi_error_ref": 0.019683385157024384
+    },
+    {
+      "level": 11,
+      "ndofs": 22512,
+      "nelems": 44575,
+      "estimator": 0.10336771055411176,
+      "nmarked": 10774,
+      "relative_l2_error_ref": 0.00027216308499006014,
+      "relative_h1_semi_error_ref": 0.01499877889197613
+    }
+  ]
+}

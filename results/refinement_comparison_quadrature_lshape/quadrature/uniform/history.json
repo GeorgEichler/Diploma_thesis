@@ -11,7 +11,7 @@
     "mc_samples_per_element": 20,
     "mc_seed": 123,
     "save_plots": true,
-    "plot_every": 2,
+    "plot_every": 1,
     "output_dir": "results\\refinement_comparison_quadrature_lshape\\quadrature\\uniform",
     "solver": "direct",
     "compute_energy": false,

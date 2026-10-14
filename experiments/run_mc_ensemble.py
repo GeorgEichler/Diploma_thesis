@@ -9,11 +9,11 @@ import numpy as np
 
 from afem.core.afem import run_afem
 from afem.core.config import AFEMConfig
-from afem.problems.rhs import high_oscillation
+from afem.problems.rhs import high_oscillation, rhs_lshape
 from afem.utils.ensemble import aggregate_histories, plot_ensemble
 from afem.utils.plotting import plot_mesh
 
-RHS = high_oscillation
+RHS = rhs_lshape
 NUM_RUNS = 10
 SUMMARY = "mean"  # "mean", "median", or "none"
 SHOW_INDIVIDUAL = True  # Faint error/estimator trajectories, not solution fields.
@@ -22,12 +22,13 @@ SAVE_FINAL_MESHES = False
 CONFIG = AFEMConfig(
     domain="lshape",
     dim=2,
-    initial_refinements=2,
-    max_iterations=8,
+    initial_refinements=1,
+    max_iterations=12,
     theta=0.5,
+    initial_mesh="lshape_four_triangles",
     load_method="monte_carlo",
     mc_samples_per_element=20,
-    mc_seed=123,  # Base seed for the reproducible ensemble.
+    mc_seed=42,  # Base seed for the reproducible ensemble.
     refinement_strategy="adaptive",  # "uniform" is also supported.
     compute_reference_error=True,
     reference_error_method="direct",
@@ -35,7 +36,7 @@ CONFIG = AFEMConfig(
     reference_quadrature_order=19,
     save_plots=False,
     save_history_plots=False,
-    output_dir=Path("results/mc_ensemble"),
+    output_dir=Path("results/mc_ensemble_lshape"),
 )
 
 

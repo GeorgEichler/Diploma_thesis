@@ -5,7 +5,6 @@ from pathlib import Path
 
 import matplotlib as mpl
 
-
 RASTER_DPI = 600
 
 

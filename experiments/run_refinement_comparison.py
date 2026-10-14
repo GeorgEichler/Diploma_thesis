@@ -23,16 +23,21 @@ from afem.core.ufem import run_ufem
 from afem.problems.rhs import constant_one, high_oscillation, rhs_lshape
 from afem.utils.plotting import plot_reference_error_comparison
 
-METHOD = "quadrature"  # "midpoint", "monte_carlo", or "quadrature"
+METHOD = "monte_carlo"  # "midpoint", "monte_carlo", or "quadrature"
 RHS = rhs_lshape
-UNIFORM_ITERATIONS = 5  # Includes initial solve; triangle count grows by 4 each step.
+UNIFORM_ITERATIONS = 6  # Includes initial solve; triangle count grows by 4 each step.
 REFERENCE_RATES = (1.0 / 2.0, 1.0 / 3.0)
 REFERENCE_STARTS = ((300.0, 0.1), (300.0, 0.2)) # referecnce points slopes ndof^{-1/2}/^{-1/3}
+# Shared limits for Monte Carlo and quadrature panels in the thesis.
+# Set either to None to restore automatic scaling for that axis.
+PLOT_XLIM = (10.0, 1e5)
+PLOT_YLIM = (1e-4, 1.0)
 CONFIG = AFEMConfig(
     domain="lshape",
     dim=2,
-    initial_refinements=3, #reduced so we do not get that much elements for uniform refinement
-    max_iterations=9,  # Adaptive iterations; independent of UNIFORM_ITERATIONS.
+    initial_mesh="lshape_four_triangles",  # "lshape_four_triangles": four triangles per square (12 total).
+    initial_refinements=1, #reduced so we do not get that much elements for uniform refinement
+    max_iterations=13,  # Adaptive iterations; independent of UNIFORM_ITERATIONS. 9 for default with 3 refinements
     theta=0.5,
     quadrature_order=2,
     estimator_quadrature_order=10,
@@ -43,8 +48,8 @@ CONFIG = AFEMConfig(
     reference_order=3,
     reference_quadrature_order=19,
     save_plots=True,
-    plot_every=2,
-    output_dir=Path("results/refinement_comparison_quadrature_lshape"),
+    plot_every=1,
+    output_dir=Path("results/refinement_comparison_Monte_Carlo_lshape_one_initial_refinement"),
 )
 
 METHODS = {
@@ -54,7 +59,7 @@ METHODS = {
 }
 STRATEGIES = (
     ("adaptive", "AFEM", "tab:blue"),
-    ("uniform", "Uniform refinement", "tab:orange"),
+    ("uniform", "Uniform", "tab:orange"),
 )
 
 
@@ -64,7 +69,8 @@ def _method_settings(method: str):
     return METHODS[method]
 
 
-def plot_saved_comparison(output_dir: Path, method: str, *, save_pdf=True, save_png=False):
+def plot_saved_comparison(output_dir: Path, method: str, *, save_pdf=True, save_png=False,
+                          xlim=PLOT_XLIM, ylim=PLOT_YLIM):
     """Replot the completed strategies using only their saved histories."""
     _, _, method_label = _method_settings(method)
     method_dir = Path(output_dir) / method
@@ -78,9 +84,10 @@ def plot_saved_comparison(output_dir: Path, method: str, *, save_pdf=True, save_
         raise FileNotFoundError(f"No refinement histories found in {method_dir}")
     plot_path = method_dir / "refinement_errors_comparison.pdf"
     return plot_reference_error_comparison(
-        runs, plot_path, title=f"Adaptive vs. uniform refinement: {method_label}",
+        runs, plot_path, title="",
         reference_rates=REFERENCE_RATES,
         reference_starts=REFERENCE_STARTS, save_pdf=save_pdf, save_png=save_png,
+        xlim=xlim, ylim=ylim,
     )
 
 

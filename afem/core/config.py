@@ -8,6 +8,7 @@ QuadratureRule = Literal["default", "midpoint"]
 DomainName = Literal["unit_square", "lshape", "unit_cube"]
 ReferenceErrorMethod = Literal["direct", "energy"]
 RefinementStrategy = Literal["adaptive", "uniform"]
+InitialMesh = Literal["default", "lshape_four_triangles"]
 
 @dataclass(frozen=True)
 class AFEMConfig:
@@ -52,3 +53,7 @@ class AFEMConfig:
     # Independently enable vector PDF and 600 dpi PNG exports.
     save_pdf: bool = True
     save_png: bool = False
+
+    # Base triangulation, before initial_refinements are applied.
+    # lshape_four_triangles uses four triangles per unit square (L-shape only).
+    initial_mesh: InitialMesh = "default"

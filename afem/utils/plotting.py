@@ -1,12 +1,15 @@
 from __future__ import annotations
+
 from fractions import Fraction
 from pathlib import Path
-import numpy as np
+
 import matplotlib.pyplot as plt
+import numpy as np
 from matplotlib.lines import Line2D
 
+from afem.utils.comparison_layout import mesh_figure
 from afem.utils.figure_export import save_figure
-from afem.utils.publication_style import PANEL_FIGSIZE, paper_style
+from afem.utils.publication_style import MESH_LINEWIDTH, PANEL_FIGSIZE, paper_style
 
 
 def _format_2d_domain_axes(ax, mesh):
@@ -24,18 +27,15 @@ def _format_2d_domain_axes(ax, mesh):
 
 @paper_style
 def plot_mesh(mesh, filename: str | Path, *, save_pdf: bool = True, save_png: bool = False):
+    """Export a mesh panel sized for four columns, without axes or tick labels."""
     filename = Path(filename)
-    fig = plt.figure(figsize=PANEL_FIGSIZE)
+    fig, ax = mesh_figure(mesh.p.shape[0])
     if mesh.p.shape[0] == 2:
-        ax = fig.add_subplot(111)
-        ax.triplot(mesh.p[0], mesh.p[1], mesh.t.T, linewidth=0.4)
-        _format_2d_domain_axes(ax, mesh)
-        ax.set_title(f"Mesh: {mesh.t.shape[1]} elements")
+        ax.triplot(mesh.p[0], mesh.p[1], mesh.t.T, linewidth=MESH_LINEWIDTH)
+        ax.set_xlim(mesh.p[0].min(), mesh.p[0].max())
+        ax.set_ylim(mesh.p[1].min(), mesh.p[1].max())
     else:
-        ax = fig.add_subplot(111, projection="3d")
         ax.scatter(mesh.p[0], mesh.p[1], mesh.p[2], s=2)
-        ax.set_title(f"3D mesh vertices: {mesh.p.shape[1]}")
-    fig.tight_layout()
     path = save_figure(fig, filename, save_pdf=save_pdf, save_png=save_png)
     plt.close(fig)
     return path
@@ -56,6 +56,38 @@ def plot_solution_2d(mesh, u: np.ndarray, filename: str | Path, *,
     path = save_figure(fig, filename, save_pdf=save_pdf, save_png=save_png)
     plt.close(fig)
     return path
+
+
+@paper_style
+def plot_solution_surface_2d(mesh, u: np.ndarray, filename: str | Path, *,
+                             save_pdf: bool = True, save_png: bool = False,
+                             elev: float = 30, azim: float = 45):
+    """Plot a P1 solution as a vector surface using the actual domain triangles."""
+    u = np.asarray(u)
+    if mesh.p.shape[0] != 2 or u.shape != (mesh.p.shape[1],):
+        raise ValueError("A surface plot requires a 2D mesh and one value per vertex.")
+    fig = plt.figure(figsize=PANEL_FIGSIZE)
+    ax = fig.add_subplot(111, projection="3d")
+    # Explicit connectivity preserves holes and non-convex domain boundaries.
+    ax.plot_trisurf(mesh.p[0], mesh.p[1], u, triangles=mesh.t.T,
+                    cmap="viridis", linewidth=0, edgecolor="none",
+                    antialiased=False, rasterized=False)
+    ax.set_xlabel(r"$x$", labelpad=0)
+    ax.set_ylabel(r"$y$", labelpad=0)
+    ax.set_zlabel(r"$u_h$", labelpad=0)
+    ax.set_xlim(mesh.p[0].min(), mesh.p[0].max())
+    ax.set_ylim(mesh.p[1].min(), mesh.p[1].max())
+    ax.set_xticks(np.linspace(mesh.p[0].min(), mesh.p[0].max(), 3))
+    ax.set_yticks(np.linspace(mesh.p[1].min(), mesh.p[1].max(), 3))
+    ax.tick_params(axis="both", labelsize=8, pad=0)
+    ax.set_box_aspect((1, 1, 0.65), zoom=0.82)
+    ax.set_facecolor("white")
+    ax.view_init(elev=elev, azim=azim)
+    fig.subplots_adjust(left=0.12, right=0.98, bottom=0.10, top=0.98)
+    try:
+        return save_figure(fig, filename, save_pdf=save_pdf, save_png=save_png)
+    finally:
+        plt.close(fig)
 
 
 @paper_style
@@ -117,6 +149,8 @@ def plot_reference_error_comparison(
     reference_rates: tuple[float, ...] = (),
     reference_starts: tuple[tuple[float, float], ...] | None = None,
     save_pdf: bool = True, save_png: bool = False,
+    xlim: tuple[float, float] | None = None,
+    ylim: tuple[float, float] | None = None,
 ):
     """Compare relative H1 seminorm (solid) and L2 (dashed) errors.
 
@@ -126,6 +160,8 @@ def plot_reference_error_comparison(
     ``ndof**(-rate)`` guide lines. ``reference_starts`` may provide one
     positive ``(ndof, error)`` start point per guide; otherwise all guides
     start at the smallest ndof and largest error in the plotted data.
+    Set ``xlim`` and ``ylim`` to share axis limits between separate figures;
+    None keeps automatic scaling.
     """
     filename = Path(filename)
     filename.parent.mkdir(parents=True, exist_ok=True)
@@ -182,8 +218,12 @@ def plot_reference_error_comparison(
 
     ax.legend(handles=method_handles + reference_handles)
     ax.set_xlabel(r"$\mathrm{ndof}$")
-    ax.set_ylabel("error")
+    ax.set_ylabel("relative error")
     ax.set_title(title)
+    if xlim is not None:
+        ax.set_xlim(xlim)
+    if ylim is not None:
+        ax.set_ylim(ylim)
     fig.tight_layout()
     path = save_figure(fig, filename, save_pdf=save_pdf, save_png=save_png)
     plt.close(fig)

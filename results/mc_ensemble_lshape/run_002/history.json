@@ -1,0 +1,147 @@
+{
+  "config": {
+    "domain": "lshape",
+    "dim": 2,
+    "initial_refinements": 1,
+    "max_iterations": 12,
+    "theta": 0.5,
+    "load_method": "monte_carlo",
+    "quadrature_rule": "default",
+    "quadrature_order": null,
+    "mc_samples_per_element": 20,
+    "mc_seed": 54,
+    "save_plots": false,
+    "plot_every": 5,
+    "output_dir": "results\\mc_ensemble_lshape\\run_002",
+    "solver": "direct",
+    "compute_energy": false,
+    "compute_reference_error": true,
+    "reference_error_method": "direct",
+    "reference_order": 3,
+    "reference_quadrature_order": 19,
+    "estimator_quadrature_order": null,
+    "refinement_strategy": "adaptive",
+    "save_history_plots": false,
+    "save_pdf": true,
+    "save_png": false,
+    "initial_mesh": "lshape_four_triangles"
+  },
+  "reference": {
+    "reference_error_method": "direct",
+    "reference_order": 3,
+    "reference_ndofs": 206761,
+    "reference_quadrature_order": 19,
+    "reference_l2_norm": 0.41339253536610177,
+    "reference_h1_semi_norm": 1.3079094097328383
+  },
+  "history": [
+    {
+      "level": 0,
+      "ndofs": 33,
+      "nelems": 48,
+      "estimator": 2.858118212056993,
+      "nmarked": 13,
+      "relative_l2_error_ref": 0.2230292509899201,
+      "relative_h1_semi_error_ref": 0.4441086247860422
+    },
+    {
+      "level": 1,
+      "ndofs": 64,
+      "nelems": 106,
+      "estimator": 1.9377667087418269,
+      "nmarked": 23,
+      "relative_l2_error_ref": 0.1090166343044093,
+      "relative_h1_semi_error_ref": 0.30492771400444363
+    },
+    {
+      "level": 2,
+      "ndofs": 122,
+      "nelems": 211,
+      "estimator": 1.4325381679741374,
+      "nmarked": 47,
+      "relative_l2_error_ref": 0.05874562053559583,
+      "relative_h1_semi_error_ref": 0.22486321810911136
+    },
+    {
+      "level": 3,
+      "ndofs": 227,
+      "nelems": 410,
+      "estimator": 1.0501027113655181,
+      "nmarked": 78,
+      "relative_l2_error_ref": 0.0320487668273757,
+      "relative_h1_semi_error_ref": 0.16016535467084572
+    },
+    {
+      "level": 4,
+      "ndofs": 394,
+      "nelems": 728,
+      "estimator": 0.7854637329278055,
+      "nmarked": 184,
+      "relative_l2_error_ref": 0.017450767631191525,
+      "relative_h1_semi_error_ref": 0.11895803076935577
+    },
+    {
+      "level": 5,
+      "ndofs": 768,
+      "nelems": 1458,
+      "estimator": 0.5689553867433628,
+      "nmarked": 277,
+      "relative_l2_error_ref": 0.00944343344216322,
+      "relative_h1_semi_error_ref": 0.08464207678521987
+    },
+    {
+      "level": 6,
+      "ndofs": 1344,
+      "nelems": 2572,
+      "estimator": 0.4240761010063435,
+      "nmarked": 645,
+      "relative_l2_error_ref": 0.0045600255173027845,
+      "relative_h1_semi_error_ref": 0.06143466084347118
+    },
+    {
+      "level": 7,
+      "ndofs": 2598,
+      "nelems": 5050,
+      "estimator": 0.31164030546253857,
+      "nmarked": 884,
+      "relative_l2_error_ref": 0.002779691530203406,
+      "relative_h1_semi_error_ref": 0.045276020389238045
+    },
+    {
+      "level": 8,
+      "ndofs": 4274,
+      "nelems": 8339,
+      "estimator": 0.23604200644777443,
+      "nmarked": 2034,
+      "relative_l2_error_ref": 0.001456669037234391,
+      "relative_h1_semi_error_ref": 0.034137916516938434
+    },
+    {
+      "level": 9,
+      "ndofs": 8029,
+      "nelems": 15796,
+      "estimator": 0.17813046356969467,
+      "nmarked": 3068,
+      "relative_l2_error_ref": 0.000861059942615989,
+      "relative_h1_semi_error_ref": 0.025973066147480257
+    },
+    {
+      "level": 10,
+      "ndofs": 13523,
+      "nelems": 26680,
+      "estimator": 0.1348148893957374,
+      "nmarked": 5396,
+      "relative_l2_error_ref": 0.0005013460260062782,
+      "relative_h1_semi_error_ref": 0.019583214934511747
+    },
+    {
+      "level": 11,
+      "ndofs": 23134,
+      "nelems": 45787,
+      "estimator": 0.10287108814046507,
+      "nmarked": 10710,
+      "relative_l2_error_ref": 0.0002834041258239448,
+      "relative_h1_semi_error_ref": 0.014949805220730134
+    }
+  ]
+}

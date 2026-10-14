@@ -27,7 +27,7 @@ class RefinementComparisonTests(unittest.TestCase):
             for name in ("plot_history", "plot_reference_error_history"):
                 resources.enter_context(patch(f"afem.core.afem.{name}"))
             cfg = replace(
-                experiment.CONFIG, domain="unit_square", initial_refinements=1,
+                experiment.CONFIG, domain="unit_square", initial_mesh="default", initial_refinements=1,
                 max_iterations=2, reference_quadrature_order=10,
                 refinement_strategy="uniform", save_plots=False, output_dir=root,
             )
@@ -70,7 +70,7 @@ class RefinementComparisonTests(unittest.TestCase):
                         experiment.plot_saved_comparison(root, method)
                         ax = plt.gcf().axes[0]
                         self.assertEqual(len(ax.lines), 4)
-                        self.assertIn("Adaptive vs. uniform", ax.get_title())
+                        self.assertEqual(ax.get_title(), "")
                         for i, (strategy, _, color) in enumerate(experiment.STRATEGIES):
                             solid, dashed = ax.lines[2*i:2*i+2]
                             self.assertEqual(solid.get_color(), color)

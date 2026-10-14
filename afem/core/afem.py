@@ -45,7 +45,8 @@ def run_afem(config: AFEMConfig, rhs):
     plots = out / "plots"
     plots.mkdir(parents=True, exist_ok=True)
 
-    mesh = make_mesh(config.domain, config.initial_refinements)
+    mesh = make_mesh(config.domain, config.initial_refinements,
+                     initial_mesh=config.initial_mesh)
     history: list[dict] = []
     reference_snapshots: list[dict] = []
     use_energy_reference_error = (
