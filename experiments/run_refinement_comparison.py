@@ -21,7 +21,10 @@ from afem.core.afem import run_afem
 from afem.core.config import AFEMConfig
 from afem.core.ufem import run_ufem
 from afem.problems.rhs import constant_one, high_oscillation, rhs_lshape
-from afem.utils.plotting import plot_reference_error_comparison
+from afem.utils.plotting import (
+    plot_estimator_comparison,
+    plot_reference_error_comparison,
+)
 
 METHOD = "monte_carlo"  # "midpoint", "monte_carlo", or "quadrature"
 RHS = rhs_lshape
@@ -71,7 +74,7 @@ def _method_settings(method: str):
 
 def plot_saved_comparison(output_dir: Path, method: str, *, save_pdf=True, save_png=False,
                           xlim=PLOT_XLIM, ylim=PLOT_YLIM):
-    """Replot the completed strategies using only their saved histories."""
+    """Replot estimators and errors; return the error plot path as before."""
     _, _, method_label = _method_settings(method)
     method_dir = Path(output_dir) / method
     runs = []
@@ -82,6 +85,10 @@ def plot_saved_comparison(output_dir: Path, method: str, *, save_pdf=True, save_
             runs.append({"history": data["history"], "label": label, "color": color})
     if not runs:
         raise FileNotFoundError(f"No refinement histories found in {method_dir}")
+    plot_estimator_comparison(
+        runs, method_dir / "refinement_estimators_comparison.pdf",
+        save_pdf=save_pdf, save_png=save_png, xlim=xlim,
+    )
     plot_path = method_dir / "refinement_errors_comparison.pdf"
     return plot_reference_error_comparison(
         runs, plot_path, title="",
@@ -135,6 +142,8 @@ def run_comparison(config: AFEMConfig, rhs, *, method: str, uniform_iterations: 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--output-dir", type=Path, default=CONFIG.output_dir,
+                        help="Results directory to write or replot (defaults to CONFIG.output_dir).")
     parser.add_argument("--method", choices=tuple(METHODS), default=METHOD)
     parser.add_argument("--plot-only", action="store_true", help="Replot saved results without solving.")
     parser.add_argument("--png", action=argparse.BooleanOptionalAction, default=CONFIG.save_png,
@@ -143,10 +152,10 @@ if __name__ == "__main__":
                         help="Save vector PDFs (enabled by default).")
     args = parser.parse_args()
     if args.plot_only:
-        path = plot_saved_comparison(CONFIG.output_dir, args.method,
+        path = plot_saved_comparison(args.output_dir, args.method,
                                      save_pdf=args.pdf, save_png=args.png)
         if path is not None:
             print(path)
     else:
-        run_comparison(replace(CONFIG, save_pdf=args.pdf, save_png=args.png), RHS,
+        run_comparison(replace(CONFIG, output_dir=args.output_dir, save_pdf=args.pdf, save_png=args.png), RHS,
                        method=args.method, uniform_iterations=UNIFORM_ITERATIONS)

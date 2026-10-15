@@ -297,6 +297,16 @@ Replot without solving using the same selected method:
 python -m experiments.run_refinement_comparison --method quadrature --plot-only
 ```
 
+Both running and replotting also save `<method>/refinement_estimators_comparison.pdf`,
+overlaying the adaptive and uniform residual estimators against DOFs. Estimator
+plots share the error plot's x limits and use automatic y limits.
+Use `--output-dir PATH` to select an existing comparison directory without editing
+the script, for example:
+
+```bash
+python -m experiments.run_refinement_comparison --method quadrature --plot-only --output-dir results/refinement_comparison_quadrature_lshape_one_initial_refinement
+```
+
 Different methods use separate folders; rerunning the same method overwrites
 its results. Choose another `CONFIG.output_dir` to retain earlier runs.
 
@@ -348,6 +358,31 @@ Recreate the comparison from saved histories (including a partially completed ru
 ```bash
 python -m experiments.run_load_comparison --plot-only
 ```
+
+Both running and replotting also save `estimators_comparison.pdf`, overlaying
+the three methods' residual estimators against DOFs with the same colors and
+markers as the error comparison. All saved levels are included. Estimators are
+the recorded values for each method's load approximation and integration rule;
+they are not normalized errors against a common reference.
+Use `--output-dir PATH` to replot another saved experiment:
+
+```bash
+python -m experiments.run_load_comparison --plot-only --output-dir results/load_comparison_low_quadrature_high_oscillation
+```
+
+Both comparison scripts honor `--png` and `--no-pdf` for estimator plots too.
+
+In `run_load_comparison.py`, configure the relative-error slope guide:
+
+```python
+REFERENCE_RATES = (1.0 / 2.0,)
+REFERENCE_STARTS = ((300.0, 0.1),)  # (ndof, relative error)
+```
+
+The guide follows `error = 0.1 * (ndof / 300)**(-1/2)` from the start point
+to the largest plotted DOF. Use `None` for automatic placement or rates `()`
+to hide guides. Estimator plots have no slope guides. Replot with `--plot-only`
+after changing these settings.
 
 Rerunning the experiment overwrites that output directory's method results;
 choose a different `CONFIG.output_dir` to retain a previous experiment.

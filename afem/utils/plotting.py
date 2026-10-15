@@ -143,6 +143,93 @@ def plot_reference_error_history(history, filename: str | Path, *,
     return path
 
 
+def _plot_reference_guides(ax, all_ndofs, all_values, reference_rates, reference_starts):
+    """Draw anchored power-law guides shared by error and estimator plots."""
+    reference_handles = []
+    if reference_rates:
+        x_min = min(values.min() for values in all_ndofs)
+        x_max = max(values.max() for values in all_ndofs)
+        y_anchor = max(values.max() for values in all_values)
+        if reference_starts is None:
+            reference_starts = tuple((x_min, y_anchor) for _ in reference_rates)
+        elif len(reference_starts) != len(reference_rates):
+            raise ValueError("Provide one reference start for each reference rate")
+        linestyles = (
+            (0, (6, 2)),
+            (0, (2, 2)),
+            (0, (6, 2, 1, 2)),
+        )
+        for index, (rate, start) in enumerate(zip(reference_rates, reference_starts)):
+            if rate <= 0:
+                raise ValueError("Reference rates must be positive")
+            x_start, y_start = start
+            if x_start <= 0 or y_start <= 0:
+                raise ValueError("Reference starts must contain positive values")
+            if x_start >= x_max:
+                raise ValueError("Reference lines must start below the largest ndof")
+            exponent = Fraction(rate).limit_denominator()
+            label = rf"$\mathrm{{ndof}}^{{-{exponent.numerator}/{exponent.denominator}}}$"
+            reference_ndofs = np.geomspace(x_start, x_max, 100)
+            reference_error = y_start * (reference_ndofs / x_start) ** -rate
+            handle, = ax.loglog(
+                reference_ndofs, reference_error, color="black",
+                linestyle=linestyles[index % len(linestyles)], linewidth=1.2,
+                label=label,
+            )
+            reference_handles.append(handle)
+
+    return reference_handles
+
+
+@paper_style
+def plot_estimator_comparison(
+    runs: list[dict], filename: str | Path, *, title: str = "",
+    reference_rates: tuple[float, ...] = (),
+    reference_starts: tuple[tuple[float, float], ...] | None = None,
+    save_pdf: bool = True, save_png: bool = False,
+    xlim: tuple[float, float] | None = None,
+    ylim: tuple[float, float] | None = None,
+):
+    """Compare saved residual estimators on independently refined meshes.
+
+    Runs use the same history, label, color, and optional marker fields as
+    plot_reference_error_comparison. Estimator values are plotted as recorded,
+    without normalization or requiring reference-solution errors. Positive
+    reference_rates add ndof**(-rate) guides anchored at reference_starts
+    (ndof, estimator); None anchors at the smallest ndof and largest estimator.
+    """
+    fig, ax = plt.subplots(figsize=PANEL_FIGSIZE)
+    all_ndofs = []
+    all_estimators = []
+    for run in runs:
+        history = run["history"]
+        ndofs = np.array([entry["ndofs"] for entry in history])
+        estimators = np.array([entry["estimator"] for entry in history])
+        all_ndofs.append(ndofs)
+        all_estimators.append(estimators)
+        ax.loglog(
+            ndofs, estimators,
+            color=run["color"], marker=run.get("marker", "o"),
+            label=run["label"],
+        )
+    _plot_reference_guides(
+        ax, all_ndofs, all_estimators, reference_rates, reference_starts,
+    )
+    ax.set_xlabel(r"$\mathrm{ndof}$")
+    ax.set_ylabel(r"Residual $\eta$")
+    ax.set_title(title)
+    ax.legend()
+    if xlim is not None:
+        ax.set_xlim(xlim)
+    if ylim is not None:
+        ax.set_ylim(ylim)
+    fig.tight_layout()
+    try:
+        return save_figure(fig, filename, save_pdf=save_pdf, save_png=save_png)
+    finally:
+        plt.close(fig)
+
+
 @paper_style
 def plot_reference_error_comparison(
     runs: list[dict], filename: str | Path, *, title: str = "Load approximation comparison",
@@ -183,38 +270,9 @@ def plot_reference_error_comparison(
             [], [], color=run["color"], marker=marker, label=run["label"],
         ))
 
-    reference_handles = []
-    if reference_rates:
-        x_min = min(values.min() for values in all_ndofs)
-        x_max = max(values.max() for values in all_ndofs)
-        y_anchor = max(values.max() for values in all_errors)
-        if reference_starts is None:
-            reference_starts = tuple((x_min, y_anchor) for _ in reference_rates)
-        elif len(reference_starts) != len(reference_rates):
-            raise ValueError("Provide one reference start for each reference rate")
-        linestyles = (
-            (0, (6, 2)),
-            (0, (2, 2)),
-            (0, (6, 2, 1, 2)),
-        )
-        for index, (rate, start) in enumerate(zip(reference_rates, reference_starts)):
-            if rate <= 0:
-                raise ValueError("Reference rates must be positive")
-            x_start, y_start = start
-            if x_start <= 0 or y_start <= 0:
-                raise ValueError("Reference starts must contain positive values")
-            if x_start >= x_max:
-                raise ValueError("Reference lines must start below the largest ndof")
-            exponent = Fraction(rate).limit_denominator()
-            label = rf"$\mathrm{{ndof}}^{{-{exponent.numerator}/{exponent.denominator}}}$"
-            reference_ndofs = np.geomspace(x_start, x_max, 100)
-            reference_error = y_start * (reference_ndofs / x_start) ** -rate
-            handle, = ax.loglog(
-                reference_ndofs, reference_error, color="black",
-                linestyle=linestyles[index % len(linestyles)], linewidth=1.2,
-                label=label,
-            )
-            reference_handles.append(handle)
+    reference_handles = _plot_reference_guides(
+        ax, all_ndofs, all_errors, reference_rates, reference_starts,
+    )
 
     ax.legend(handles=method_handles + reference_handles)
     ax.set_xlabel(r"$\mathrm{ndof}$")

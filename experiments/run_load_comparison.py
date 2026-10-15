@@ -4,10 +4,6 @@ Run from the project root with:
     python -m experiments.run_load_comparison
 Recreate the combined plot from saved histories with:
     python -m experiments.run_load_comparison --plot-only
-
-Each method uses its own enriched final-mesh reference, as in run_afem.
-The labels Pi_0 f and f denote midpoint and standard quadrature here;
-neither midpoint cell averages nor integration of arbitrary f are exact.
 """
 
 import argparse  # noqa: I001
@@ -20,7 +16,7 @@ import numpy as np
 from afem.core.afem import run_afem
 from afem.core.config import AFEMConfig
 from afem.problems.rhs import high_oscillation, low_oscillation
-from afem.utils.plotting import plot_reference_error_comparison
+from afem.utils.plotting import plot_estimator_comparison, plot_reference_error_comparison
 
 
 # Select the same RHS and common settings for all three methods here.
@@ -41,17 +37,17 @@ CONFIG = AFEMConfig(
     reference_error_method="direct",
     save_plots=True,
     plot_every=2,
-    output_dir=Path("results/load_comparison_low_quadrature_low_oscillation"),
+    output_dir=Path("results/load_comparison_low_quadrature_high_oscillation"),
 )
 
 # Use more adaptive levels for midpoint; None uses CONFIG.max_iterations.
 MIDPOINT_ITERATIONS = 12
 # Optional standard quadrature limit; None uses CONFIG.max_iterations.
 QUADRATURE_ITERATIONS: int | None = None
-# Add optional convergence guides, e.g. (1.0 / 2.0,); empty means none.
-REFERENCE_RATES: tuple[float, ...] = ()
+# Error-plot convergence guides, e.g. (1.0 / 2.0,); empty means none.
+REFERENCE_RATES: tuple[float, ...] = (1.0 / 2.0,)
 # Optionally provide one (ndof, error) start point for each rate.
-REFERENCE_STARTS: tuple[tuple[float, float], ...] | None = None
+REFERENCE_STARTS: tuple[tuple[float, float], ...] | None = ((33, 0.25),)
 
 # Tuple order is also execution order.
 METHODS = (
@@ -62,7 +58,7 @@ METHODS = (
 
 
 def plot_saved_comparison(output_dir: Path, *, save_pdf=True, save_png=False):
-    """Replot completed methods without rerunning any numerical solves."""
+    """Replot estimators and errors; return the error plot path as before."""
     output_dir = Path(output_dir)
     runs = []
     for name, _, _, label, color, marker in METHODS:
@@ -77,6 +73,10 @@ def plot_saved_comparison(output_dir: Path, *, save_pdf=True, save_png=False):
             })
     if not runs:
         raise FileNotFoundError(f"No method histories found in {output_dir}")
+    plot_estimator_comparison(
+        runs, output_dir / "estimators_comparison.pdf",
+        save_pdf=save_pdf, save_png=save_png,
+    )
     plot_path = output_dir / "relative_errors_comparison.pdf"
     return plot_reference_error_comparison(
         runs, plot_path, reference_rates=REFERENCE_RATES, title="",
@@ -141,6 +141,8 @@ def run_comparison(
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--output-dir", type=Path, default=CONFIG.output_dir,
+                        help="Results directory to write or replot (defaults to CONFIG.output_dir).")
     parser.add_argument("--plot-only", action="store_true", help="Plot saved histories without solving.")
     parser.add_argument("--png", action=argparse.BooleanOptionalAction, default=CONFIG.save_png,
                         help="Save 600 dpi PNG images (disabled by default).")
@@ -148,10 +150,10 @@ if __name__ == "__main__":
                         help="Save vector PDFs (enabled by default).")
     args = parser.parse_args()
     if args.plot_only:
-        path = plot_saved_comparison(CONFIG.output_dir, save_pdf=args.pdf, save_png=args.png)
+        path = plot_saved_comparison(args.output_dir, save_pdf=args.pdf, save_png=args.png)
         if path is not None:
             print(path)
     else:
-        run_comparison(replace(CONFIG, save_pdf=args.pdf, save_png=args.png), RHS,
+        run_comparison(replace(CONFIG, output_dir=args.output_dir, save_pdf=args.pdf, save_png=args.png), RHS,
                        midpoint_iterations=MIDPOINT_ITERATIONS,
                        quadrature_iterations=QUADRATURE_ITERATIONS)

@@ -14,7 +14,7 @@ from afem.utils.ensemble import aggregate_histories, plot_ensemble
 from afem.utils.plotting import plot_mesh
 
 RHS = rhs_lshape
-NUM_RUNS = 10
+NUM_RUNS = 20
 SUMMARY = "mean"  # "mean", "median", or "none"
 SHOW_INDIVIDUAL = True  # Faint error/estimator trajectories, not solution fields.
 SHOW_BAND = True  # Pointwise 25–75% spread across runs.
