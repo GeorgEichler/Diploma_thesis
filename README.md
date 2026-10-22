@@ -7,8 +7,8 @@ problem with homogeneous Dirichlet boundary conditions:
 -\Delta u = f \quad \text{in } D, \qquad u = 0 \quad \text{on } \partial D.
 ```
 
-Built on ideas from [Storn (2026)](https://arxiv.org/abs/2602.04490) to study the convergence behavior
-of the AFEM algorithm with approximated right-hand side load functions.
+Built on ideas from Randomized Projection Operators onto Piecewise Polynomial Spaces, [Storn (2026)](https://arxiv.org/abs/2602.04490) 
+to study the convergence behavior of the AFEM algorithm with approximated right-hand side load functions.
 These include on the one hand the deterministic $L^2$-orthogonal projection for a triangulation $\mathcal{T}$
 
 $$
