@@ -1,17 +1,33 @@
-﻿# Adaptive Finite Element Experiments
+﻿# Adaptive Finite Element Experiments for approximated loads
 
 A Python codebase for studying adaptive finite element methods for the Poisson
 problem with homogeneous Dirichlet boundary conditions:
 
 ```math
--\Delta u = f \quad \text{in } \Omega, \qquad u = 0 \quad \text{on } \partial\Omega.
+-\Delta u = f \quad \text{in } D, \qquad u = 0 \quad \text{on } \partial D.
 ```
 
-Built on scikit-fem, it focuses on how mesh refinement and load approximation
-affect convergence.
+Built on ideas from [Storn (2026)]([https://arxiv.org/abs/2602.04490]) to study the convergence behavior
+of the AFEM algorithm with approximated right-hand side load functions.
+These include on the one hand the deterministic $L^2$-orthogonal projection for a triangulation $\mathcal{T}$
+
+$$
+\Pi_0 f \colon L^2(D) \rightarrow P_0(\mathcal{T}), \quad \\Pi_0 f|_T = \frac{1}{|T|} \int_T f  dx.
+$$
+
+and for a randomized approximation operator with given sample number $N \in \mathbb N$
+
+$$
+\hat{\Pi}_0 f \colon L^2(D) \rightarrow P_0(\mathcal{T}), \quad \hat{\Pi}_0 f|_T = \frac{1}{N} \sum_{i=1}^N f(X_i^T), 
+$$
+
+where $X_i^T$ are uniformly distributed random variables on the simplex T.
+We study if the AFEM with randomized load function still shows the typical convergence advantages when using adaptive refinement
+instead of uniform refinement on a L-shape benchmark problem and compare its convergence behavior for a highly oscillating right-hand side.
 
 ## Main capabilities
 
+- Implementation of Finite Element Method utilises the scikit-fem library
 - Piecewise linear (P1) elements on triangular and tetrahedral meshes, with square,
   L-shaped, and cube domains.
 - Adaptive refinement using a residual error estimator and Dörfler marking,
@@ -20,8 +36,6 @@ affect convergence.
   sampling.
 - Experiments comparing refinement strategies, load methods, Monte Carlo sample
   counts, and repeated random realizations.
-- Optional reference-solution error evaluation, saved numerical results, and plots
-  of meshes, solutions, and convergence.
 
 ## Installation
 
