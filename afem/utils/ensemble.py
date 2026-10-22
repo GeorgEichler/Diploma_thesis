@@ -18,6 +18,16 @@ METRICS = (
 )
 
 
+def _aligned_values(histories, key, grid):
+    """Use the last observation at each DOF count, with no extrapolation."""
+    aligned = []
+    for history in histories:
+        by_dofs = {entry["ndofs"]: entry[key] for entry in history}
+        dofs = sorted(by_dofs)
+        aligned.append(np.interp(np.log(grid), np.log(dofs), [by_dofs[n] for n in dofs]))
+    return np.asarray(aligned)
+
+
 def aggregate_histories(histories: list[list[dict]], grid_points: int = 100) -> dict:
     """Interpolate errors linearly in log(DOFs), then average across runs.    """
     if not histories or grid_points < 2:
@@ -50,10 +60,7 @@ def aggregate_histories(histories: list[list[dict]], grid_points: int = 100) -> 
         "metrics": {},
     }
     for key, *_ in METRICS:
-        aligned = np.array([
-            np.interp(np.log(grid), np.log([h["ndofs"] for h in curve]), [h[key] for h in curve])
-            for curve in curves
-        ])
+        aligned = _aligned_values(curves, key, grid)
         result["metrics"][key] = {
             "mean": np.mean(aligned, axis=0).tolist(),
             "median": np.median(aligned, axis=0).tolist(),
@@ -64,9 +71,65 @@ def aggregate_histories(histories: list[list[dict]], grid_points: int = 100) -> 
 
 
 @paper_style
+def plot_ensemble_error_deviations(histories, statistics, output_dir, *,
+                                   save_pdf=True, save_png=False):
+    """Plot 100 * (run error - ensemble mean) / mean on the common DOF grid.
+
+    Both error norms use the same alignment as the ensemble statistics.
+    Zero-mean locations have undefined percentages and are omitted.
+    """
+    fig, ax, _ = comparison_figure()
+    grid = np.asarray(statistics["ndofs"])
+    zero_mean = False
+    handles = []
+    ax.axhline(0, color="gray", linewidth=0.6)
+    for key, label, color, style, panel in METRICS:
+        if panel != 0:
+            continue
+        stats = statistics["metrics"][key]
+        mean = np.asarray(stats["mean"])
+        valid = mean > 0
+        zero_mean |= bool(np.any(~valid))
+
+        def percentage(values):
+            values = np.asarray(values)
+            return np.divide(100 * (values - mean), mean,
+                             out=np.full(values.shape, np.nan), where=valid)
+
+        for values in _aligned_values(histories, key, grid):
+            ax.plot(grid, percentage(values), color=color, linestyle=style,
+                    alpha=0.4, linewidth=0.55, marker="o" if len(grid) == 1 else None,
+                    markersize=2)
+        ax.fill_between(grid, percentage(stats["q25"]), percentage(stats["q75"]),
+                        color=color, alpha=0.16, linewidth=0)
+        handles.append(Line2D([], [], color=color, linestyle=style, label=label))
+    ax.set_xscale("log")
+    ax.set_xlabel(r"$\mathrm{ndof}$")
+    ax.set_ylabel("deviation from mean (%)")
+    ax.legend(handles=handles)
+    fig.legend(handles=[
+        Line2D([], [], color="gray", alpha=0.5, linewidth=0.55, label="Individual runs"),
+        Patch(color="gray", alpha=0.16, label="25-75% of runs"),
+    ], loc="lower left", bbox_to_anchor=(0.22, 0.06), frameon=False, borderaxespad=0)
+    if zero_mean:
+        ax.text(0.02, 0.02, "Zero-mean points omitted", transform=ax.transAxes, fontsize=6)
+    output_dir = Path(output_dir)
+    output_dir.mkdir(parents=True, exist_ok=True)
+    path = save_figure(fig, output_dir / "ensemble_error_deviations.pdf",
+                       save_pdf=save_pdf, save_png=save_png)
+    plt.close(fig)
+    return path
+
+
+@paper_style
 def plot_ensemble(histories, statistics, output_dir, *, summary="median",
                   show_individual=True, show_band=True, save_pdf=True, save_png=False):
-    """Export enabled formats and return PDF paths, or PNG paths for PNG-only output."""
+    """Export errors, estimator, and mean-relative error deviations.
+
+    Deviation plots always show individual runs and their interquartile band;
+    summary and visibility options apply to the original convergence plots.
+    Return PDF paths, or PNG paths for PNG-only output.
+    """
     if summary not in ("mean", "median", "none"):
         raise ValueError("summary must be 'mean', 'median', or 'none'")
     if summary == "none" and not show_individual and not show_band:
@@ -123,4 +186,8 @@ def plot_ensemble(histories, statistics, output_dir, *, summary="median",
         if saved_path is not None:
             saved_paths.append(saved_path)
         plt.close(fig)
+    deviation_path = plot_ensemble_error_deviations(
+        histories, statistics, output_dir, save_pdf=save_pdf, save_png=save_png)
+    if deviation_path is not None:
+        saved_paths.append(deviation_path)
     return tuple(saved_paths)

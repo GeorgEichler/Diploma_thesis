@@ -13,7 +13,7 @@ matplotlib.use("Agg")
 import numpy as np
 
 from afem.problems.rhs import manufactured_sine_2d
-from afem.utils.ensemble import METRICS, aggregate_histories
+from afem.utils.ensemble import METRICS, aggregate_histories, plot_ensemble_error_deviations
 from experiments import run_mc_ensemble as experiment
 
 
@@ -22,6 +22,39 @@ def entry(ndofs, value):
 
 
 class EnsembleTests(unittest.TestCase):
+    def test_percentage_deviations_use_aligned_mean(self):
+        histories = [[entry(10, 99), entry(10, 1), entry(100, 3)],
+                     [entry(10, 3), entry(1000, 7)]]
+        stats = aggregate_histories(histories, grid_points=3)
+        with tempfile.TemporaryDirectory() as tmp:
+            with patch("afem.utils.ensemble.save_figure") as save:
+                plot_ensemble_error_deviations(histories, stats, tmp)
+                ax = save.call_args.args[0].axes[0]
+                self.assertEqual(ax.get_xscale(), "log")
+                self.assertEqual(ax.get_yscale(), "linear")
+                # First line is the zero guide; subsequent lines are the two runs per norm.
+                for low, high in ((ax.lines[1], ax.lines[2]), (ax.lines[3], ax.lines[4])):
+                    np.testing.assert_allclose(low.get_xdata(), stats["ndofs"])
+                    np.testing.assert_allclose(low.get_ydata(), [-50, -100 / 3, -25])
+                    np.testing.assert_allclose(high.get_ydata(), [50, 100 / 3, 25])
+                self.assertEqual(len(ax.collections), 2)
+
+    def test_percentage_deviations_handle_zero_mean_and_single_point(self):
+        histories = [[entry(10, 0)], [entry(10, 0)]]
+        stats = aggregate_histories(histories)
+        with tempfile.TemporaryDirectory() as tmp:
+            with patch("afem.utils.ensemble.save_figure") as save:
+                plot_ensemble_error_deviations(histories, stats, tmp)
+                ax = save.call_args.args[0].axes[0]
+                self.assertTrue(all(np.isnan(line.get_ydata()).all() for line in ax.lines[1:]))
+                self.assertIn("Zero-mean", ax.texts[0].get_text())
+            histories = [[entry(10, 2)]]
+            with patch("afem.utils.ensemble.save_figure") as save:
+                plot_ensemble_error_deviations(histories, aggregate_histories(histories), tmp)
+                ax = save.call_args.args[0].axes[0]
+                np.testing.assert_allclose(ax.lines[1].get_ydata(), [0])
+                self.assertEqual(ax.lines[1].get_marker(), "o")
+
     def test_alignment_common_range_and_statistics(self):
         a = [entry(10, 99), entry(10, 1), entry(100, 3)]
         b = [entry(10, 3), entry(1000, 7)]
@@ -62,7 +95,8 @@ class EnsembleTests(unittest.TestCase):
 
             with patch.object(experiment, "run_afem", side_effect=checked_run):
                 paths = experiment.run_ensemble(cfg, manufactured_sine_2d, num_runs=2)
-            self.assertEqual([p.name for p in paths], ["ensemble_errors.pdf", "ensemble_estimator.pdf"])
+            self.assertEqual([p.name for p in paths], ["ensemble_errors.pdf", "ensemble_estimator.pdf",
+                                                      "ensemble_error_deviations.pdf"])
             self.assertTrue(all(p.is_file() for p in paths))
             self.assertEqual(list(out.rglob("*.png")), [])
             self.assertEqual([c.mc_seed for c in calls], [cfg.mc_seed, cfg.mc_seed + 2])
