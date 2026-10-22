@@ -76,13 +76,7 @@ def reference_solution_energy_errors(
     reference_order: int = 3,
     quadrature_order: int | None = None,
 ) -> dict:
-    """Solve a reference problem and add final-mesh energy errors.
-
-    The energy identity is only meaningful numerically if J(u_h) and J(u_ref)
-    are evaluated with the same load functional.  For oscillatory right-hand
-    sides, evaluating early iterates on their coarse meshes can under-integrate
-    the load term, so we prolong the P1 iterates to the final mesh first.
-    """
+    """Solve a reference problem and add final-mesh energy errors."""
     reference_data = reference_solution_energy(
         mesh,
         rhs,
@@ -136,12 +130,7 @@ def _prolong_p1_to_mesh(
     target_mesh,
     batch_size: int = 256,
 ) -> np.ndarray:
-    """Evaluate a nested P1 function at the vertices of target_mesh.
-
-    scikit-fem's interpolator may allocate an array with shape roughly
-    (dim, source elements, target points).  Chunking target vertices avoids
-    multi-GiB allocations on late adaptive meshes.
-    """
+    """Evaluate a nested P1 function at the vertices of target_mesh."""
     source_basis = make_basis(
         source_mesh,
         element_order=1,
@@ -166,13 +155,7 @@ def reference_solution_direct_errors(
     reference_order: int = 3,
     quadrature_order: int | None = None,
 ) -> dict:
-    """Solve an enriched reference problem and add relative L2 and H1 seminorm errors.
-
-    The AFEM iterates are P1 functions on meshes produced by refinement of the
-    final mesh lineage.  They are therefore prolonged exactly by evaluating the
-    old P1 function at the final mesh vertices and integrating both functions on
-    the final mesh.
-    """
+    """Solve an enriched reference problem and add relative L2 and H1 errors."""
     if quadrature_order is None:
         quadrature_order = default_energy_quadrature_order(reference_order)
 

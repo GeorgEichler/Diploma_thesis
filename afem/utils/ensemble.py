@@ -19,14 +19,7 @@ METRICS = (
 
 
 def aggregate_histories(histories: list[list[dict]], grid_points: int = 100) -> dict:
-    """Interpolate errors linearly in log(DOFs), then average across runs.
-
-    Use only the DOF interval reached by every run; never extrapolate. When a
-    run revisits a DOF count, retain its last observation for aggregation.
-    Raw plots still include all observations. Zeros remain zero in the data.
-    These are descriptive statistics of interpolated curves, not FEM solutions
-    on a shared mesh and not confidence intervals.
-    """
+    """Interpolate errors linearly in log(DOFs), then average across runs.    """
     if not histories or grid_points < 2:
         raise ValueError("Provide at least one history and grid_points >= 2")
     curves = []

@@ -1,4 +1,3 @@
-"""Run with python -m unittest testing.test_refinement_comparison."""
 
 import json
 import tempfile
@@ -9,12 +8,13 @@ from pathlib import Path
 from unittest.mock import patch
 
 import matplotlib
+
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
 
+import experiments
 from afem.problems.rhs import manufactured_sine_2d
-from experiments import run_refinement_comparison as experiment
 
 
 class RefinementComparisonTests(unittest.TestCase):
@@ -22,18 +22,18 @@ class RefinementComparisonTests(unittest.TestCase):
         with ExitStack() as resources:
             root = Path(resources.enter_context(tempfile.TemporaryDirectory()))
             # Tiny test meshes do not reach the experiment's paper-scale slope anchors.
-            resources.enter_context(patch.object(experiment, "REFERENCE_RATES", ()))
-            resources.enter_context(patch.object(experiment, "REFERENCE_STARTS", None))
+            resources.enter_context(patch.object(experiments.run_refinement_comparison, "REFERENCE_RATES", ()))
+            resources.enter_context(patch.object(experiments.run_refinement_comparison, "REFERENCE_STARTS", None))
             for name in ("plot_history", "plot_reference_error_history"):
                 resources.enter_context(patch(f"afem.core.afem.{name}"))
             cfg = replace(
-                experiment.CONFIG, domain="unit_square", initial_mesh="default", initial_refinements=1,
+                experiments.run_refinement_comparison.CONFIG, domain="unit_square", initial_mesh="default", initial_refinements=1,
                 max_iterations=2, reference_quadrature_order=10,
                 refinement_strategy="uniform", save_plots=False, output_dir=root,
             )
-            original_uniform = experiment.run_ufem
+            original_uniform = experiments.run_refinement_comparison.run_ufem
 
-            for method, (load, rule, _) in experiment.METHODS.items():
+            for method, (load, rule, _) in experiments.run_refinement_comparison.METHODS.items():
                 with self.subTest(method=method):
                     def checked_uniform(config, rhs):
                         adaptive_dir = root / method / "adaptive"
@@ -41,8 +41,8 @@ class RefinementComparisonTests(unittest.TestCase):
                             self.assertTrue((adaptive_dir / filename).is_file())
                         return original_uniform(config, rhs)
 
-                    with patch.object(experiment, "run_ufem", side_effect=checked_uniform) as uniform:
-                        pdf = experiment.run_comparison(
+                    with patch.object(experiments.run_refinement_comparison, "run_ufem", side_effect=checked_uniform) as uniform:
+                        pdf = experiments.run_refinement_comparison.run_comparison(
                             cfg, manufactured_sine_2d, method=method, uniform_iterations=3,
                         )
                         self.assertEqual(uniform.call_count, 1)
@@ -64,14 +64,14 @@ class RefinementComparisonTests(unittest.TestCase):
                         with np.load(folder / "final_solution.npz") as saved:
                             self.assertEqual(saved["u"].size, data["history"][-1]["ndofs"])
 
-                    with patch.object(experiment, "run_afem", side_effect=AssertionError("Unexpected solve")), \
-                         patch.object(experiment, "run_ufem", side_effect=AssertionError("Unexpected solve")), \
+                    with patch.object(experiments.run_refinement_comparison, "run_afem", side_effect=AssertionError("Unexpected solve")), \
+                         patch.object(experiments.run_refinement_comparison, "run_ufem", side_effect=AssertionError("Unexpected solve")), \
                          patch("afem.utils.plotting.plt.close"):
-                        experiment.plot_saved_comparison(root, method)
+                        experiments.run_refinement_comparison.plot_saved_comparison(root, method)
                         ax = plt.gcf().axes[0]
                         self.assertEqual(len(ax.lines), 4)
                         self.assertEqual(ax.get_title(), "")
-                        for i, (strategy, _, color) in enumerate(experiment.STRATEGIES):
+                        for i, (strategy, _, color) in enumerate(experiments.run_refinement_comparison.STRATEGIES):
                             solid, dashed = ax.lines[2*i:2*i+2]
                             self.assertEqual(solid.get_color(), color)
                             self.assertEqual(dashed.get_color(), color)
@@ -81,16 +81,16 @@ class RefinementComparisonTests(unittest.TestCase):
                             np.testing.assert_allclose(solid.get_ydata(), [h["relative_h1_semi_error_ref"] for h in data["history"]])
                             np.testing.assert_allclose(dashed.get_ydata(), [h["relative_l2_error_ref"] for h in data["history"]])
                     plt.close("all")
-                    experiment.plot_saved_comparison(root, method, save_png=True)
+                    experiments.run_refinement_comparison.plot_saved_comparison(root, method, save_png=True)
                     self.assertTrue(pdf.with_suffix(".png").is_file())
 
     def test_invalid_choices_fail_before_solving(self):
-        with patch.object(experiment, "run_afem") as solve:
+        with patch.object(experiments.run_refinement_comparison, "run_afem") as solve:
             with self.assertRaises(ValueError):
-                experiment.run_comparison(experiment.CONFIG, manufactured_sine_2d,
+                experiments.run_refinement_comparison.run_comparison(experiments.run_refinement_comparison.CONFIG, manufactured_sine_2d,
                                          method="unknown", uniform_iterations=2)
             with self.assertRaises(ValueError):
-                experiment.run_comparison(experiment.CONFIG, manufactured_sine_2d,
+                experiments.run_refinement_comparison.run_comparison(experiments.run_refinement_comparison.CONFIG, manufactured_sine_2d,
                                          method="quadrature", uniform_iterations=0)
             solve.assert_not_called()
 

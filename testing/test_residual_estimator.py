@@ -3,7 +3,7 @@
 import unittest
 
 import numpy as np
-from skfem import MeshTri, MeshTet
+from skfem import MeshTet, MeshTri
 
 from afem.core.estimator import residual_estimator
 from afem.core.geometry import element_geometry

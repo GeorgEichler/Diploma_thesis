@@ -1,13 +1,12 @@
 from __future__ import annotations
+
 import itertools
+
 import numpy as np
 
 
 def element_geometry(mesh, u: np.ndarray | None = None):
-    """Element volumes, diameters, P1 gradients, barycentric gradients.
-
-    If u is None, gradients of u are returned as None.
-    """
+    """Element volumes, diameters, P1 gradients, barycentric gradients.    """
     p, t = mesh.p, mesh.t
     dim, ne = p.shape[0], t.shape[1]
     vols = np.empty(ne)
@@ -45,10 +44,7 @@ def facet_measure(vertices: np.ndarray) -> float:
 
 
 def interior_facets(mesh):
-    """Build interior facet adjacency independent of scikit-fem internals.
-
-    Yields tuples: (face_vertices_global, (elem0, local_opposite0), (elem1, local_opposite1)).
-    """
+    """Build interior facet adjacency"""
     t = mesh.t
     nloc, ne = t.shape
     faces: dict[tuple[int, ...], list[tuple[int, int]]] = {}

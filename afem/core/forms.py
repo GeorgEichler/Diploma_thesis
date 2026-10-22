@@ -1,7 +1,10 @@
 from __future__ import annotations
+
 from skfem import BilinearForm, LinearForm
 from skfem.helpers import dot, grad
 
+
+# Define bilinear form and the linear form for the weak formulation of the Poisson equation
 @BilinearForm
 def laplace(u, v, w):
     return dot(grad(u), grad(v))

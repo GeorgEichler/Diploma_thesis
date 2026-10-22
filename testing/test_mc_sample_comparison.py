@@ -8,12 +8,14 @@ from pathlib import Path
 from unittest.mock import patch
 
 import matplotlib
+
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
 
 from afem.problems.rhs import manufactured_sine_2d
 from experiments import run_mc_sample_comparison as experiment
+import itertools
 
 
 class SampleComparisonTests(unittest.TestCase):
@@ -83,7 +85,7 @@ class SampleComparisonTests(unittest.TestCase):
                     brightness.append(np.mean(h1.get_color()[:3]))
                     data = json.loads((out / f"samples_{count}" / "history.json").read_text())
                     np.testing.assert_allclose(l2.get_ydata(), [h["relative_l2_error_ref"] for h in data["history"]])
-                self.assertTrue(all(a > b for a, b in zip(brightness, brightness[1:])))
+                self.assertTrue(all(a > b for a, b in itertools.pairwise(brightness)))
                 for fig in figures:
                     self.assertEqual(fig.axes[0].get_title(), "")
                     self.assertIsNone(fig._suptitle)
@@ -110,7 +112,7 @@ class SampleComparisonTests(unittest.TestCase):
                     raise RuntimeError("Simulated interruption")
                 return original(config, rhs)
 
-            with patch.object(experiment, "run_afem", side_effect=fail_second):
+            with patch.object(experiment, "run_afem", side_effect=fail_second):  # noqa: SIM117
                 with self.assertRaisesRegex(RuntimeError, "Simulated interruption"):
                     experiment.run_comparison(cfg, manufactured_sine_2d, sample_counts=[1, 2])
             paths = experiment.plot_saved_comparison(cfg.output_dir)

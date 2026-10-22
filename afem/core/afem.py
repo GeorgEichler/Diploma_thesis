@@ -1,3 +1,7 @@
+"""
+Implements MAIN AFEM loop
+"""
+
 from __future__ import annotations
 
 import json
@@ -15,11 +19,9 @@ from afem.utils.plotting import (
 
 from .config import AFEMConfig
 from .energy_error_norms import (
-    add_energy_error_to_history,
     default_energy_quadrature_order,
     dirichlet_energy,
     reference_solution_direct_errors,
-    reference_solution_energy,
     reference_solution_energy_errors,
 )
 from .estimator import residual_estimator
@@ -58,7 +60,7 @@ def run_afem(config: AFEMConfig, rhs):
         energy_quadrature_order = default_energy_quadrature_order(config.reference_order)
 
     for level in range(config.max_iterations):
-        # Important for reproducible MC: use same seed policy for a given level.
+        # Important for reproducibility
         seed_l = config.mc_seed + level
         u, basis, fbar = solve_poisson(
             mesh, rhs, config.load_method, config.mc_samples_per_element, seed_l,
@@ -122,7 +124,7 @@ def run_afem(config: AFEMConfig, rhs):
                 else _refine_marked(mesh, marked)
             )
 
-    # Compute reference solution on final mesh and append selected error data.
+    # Compute reference solution for error computation
     reference_data = None
     if config.compute_reference_error:
         if config.reference_error_method == "direct":
@@ -134,7 +136,6 @@ def run_afem(config: AFEMConfig, rhs):
                 quadrature_order=energy_quadrature_order,
             )
         elif config.reference_error_method == "energy":
-            # Use either reference_solution_energy -> compute energy on coarse mesh
             # reference_solution_energy_errors -> prolong to final mesh
             reference_data = reference_solution_energy_errors(
                 mesh,

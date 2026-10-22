@@ -1,7 +1,9 @@
-import numpy as np
 from pathlib import Path
-from afem.core.config import AFEMConfig
+
+import numpy as np
+
 from afem.core.afem import run_afem
+from afem.core.config import AFEMConfig
 from afem.problems.rhs import manufactured_sine_2d
 from afem.utils.plotting import plot_solution_2d
 

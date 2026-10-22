@@ -1,7 +1,10 @@
 from __future__ import annotations
+
 import numpy as np
+
 from .geometry import element_geometry, facet_measure, interior_facets
 from .solver import make_basis
+
 
 def residual_estimator(
     mesh, u: np.ndarray, rhs, fbar: np.ndarray | None = None,
@@ -11,11 +14,6 @@ def residual_estimator(
 
     eta_K^2 = h_K^2 ||f + Delta u_h||^2_K
               + 1/2 sum_{E interior, E subset dK} h_E ||[grad u_h . n]||^2_E.
-
-    For P1 elements Delta u_h = 0 elementwise.  If fbar is supplied, it is used
-    as an elementwise P0 approximation of f. Otherwise, midpoint uses centroid
-    values, while default quadrature integrates f squared on each element.
-    quadrature_order only affects default quadrature, independently of assembly.
     """
     vols, hs, grad_u, grad_lam = element_geometry(mesh, u)
     if fbar is not None:

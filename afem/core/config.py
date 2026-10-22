@@ -16,7 +16,7 @@ class AFEMConfig:
     dim: int = 2
     initial_refinements: int = 2
     max_iterations: int = 10
-    theta: float = 0.5 # for Dörfler marrking
+    theta: float = 0.5 # bulk parameter for Dörfler marrking
 
     load_method: LoadMethod = "quadrature"
     quadrature_rule: QuadratureRule = "default"
@@ -29,13 +29,13 @@ class AFEMConfig:
     output_dir: Path = Path("results")
     solver: Literal["direct"] = "direct"
 
-    # Store J(u_h) in the history without necessarily solving a reference problem.
+    # Store energy in the history without necessarily solving a reference problem.
     compute_energy: bool = False
     compute_reference_error: bool = False
     # "direct" computes relative L2 and H1 seminorm errors against an enriched reference solution.
     # "energy" keeps the older Dirichlet-energy based error computation.
     reference_error_method: ReferenceErrorMethod = "direct"
-    # Order of the Lagrange polynomial space
+    # Order of the Lagrange polynomial space for the reference solution
     reference_order: int = 3
     # Order of quadrature rule for solving energy integral of reference solution
     reference_quadrature_order: int | None = None
@@ -44,7 +44,7 @@ class AFEMConfig:
     # quadrature_order (or scikit-fem's default if that is also None).
     estimator_quadrature_order: int | None = None
 
-    # Uniform refinement ignores theta and refines every element at each step.
+    # Uniform refinement strategy as second option
     refinement_strategy: RefinementStrategy = "adaptive"
 
     # Allow ensemble experiments to save numerical histories without per-run plots.

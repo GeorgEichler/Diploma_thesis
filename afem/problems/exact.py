@@ -1,8 +1,9 @@
 from __future__ import annotations
+
 import numpy as np
 
 Array = np.ndarray
-
+# exact solutions for some toy problems
 def sine_2d(x: Array) -> Array:
     return np.sin(np.pi * x[0]) * np.sin(np.pi * x[1])
 

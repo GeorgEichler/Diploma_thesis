@@ -1,6 +1,7 @@
 from __future__ import annotations
+
 import numpy as np
-from skfem import MeshTri, MeshTet
+from skfem import MeshTet, MeshTri
 
 
 def _lshape_four_triangles():

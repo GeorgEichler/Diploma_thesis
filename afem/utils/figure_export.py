@@ -20,13 +20,7 @@ class _FontTimestampFilter(logging.Filter):
 
 def save_figure(fig, filename: str | Path, *, save_pdf: bool = True,
                 save_png: bool = False, dpi: int = RASTER_DPI) -> Path | None:
-    """Export enabled formats; return PDF, otherwise PNG, or None if disabled.
-
-    Keep the full canvas so matching comparison layouts stay aligned in LaTeX.
-    DPI controls raster output and any rasterized artists inside vector files.
-    The filename supplies the base name; even a legacy PNG filename defaults
-    to PDF only. Each format can be enabled independently.
-    """
+    """Export enabled formats; return PDF, otherwise PNG, or None if disabled."""
     if not save_pdf and not save_png:
         return None
     filename = Path(filename)
