@@ -22,8 +22,8 @@ $$
 $$
 
 where $X_i^T$ are uniformly distributed random variables on the simplex T.
-We study if the AFEM with randomized load function still shows the typical convergence advantages when using adaptive refinement
-instead of uniform refinement on a L-shape benchmark problem and compare its convergence behavior for a highly oscillating right-hand side.
+We study whether the AFEM with randomized load function still shows the typical convergence advantages when using adaptive refinement
+instead of uniform refinement on a L-shaped benchmark problem and compare its convergence behavior for a highly oscillating right-hand side.
 
 ## Main capabilities
 
